@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Flip Imobiliário Pro</title>
+    <!-- Fonte Inter para visual moderno -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray: #64748b;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+        }
+
+        * { box-sizing: border-box; outline: none; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--dark);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* Cabeçalho */
+        .header {
+            grid-column: 1 / -1;
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border);
+        }
+
+        .header h1 { margin: 0; font-size: 1.5rem; color: var(--dark); font-weight: 700; }
+        .badge { background: var(--dark); color: white; padding: 6px 14px; border-radius: 99px; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.5px; }
+
+        /* Colunas */
+        .input-section, .result-section {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 { 
+            margin-top: 0; 
+            font-size: 1rem; 
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gray); 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 12px; 
+            margin-bottom: 20px; 
+            font-weight: 700;
+        }
+
+        /* Formulários */
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 8px; color: var(--dark); }
+        .hint { font-size: 0.75rem; color: var(--gray); font-weight: 400; margin-left: 4px; }
+
+        input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            color: var(--dark);
+            background: #fdfdfd;
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            background: #fff;
+        }
+
+        .input-row { display: flex; gap: 16px; }
+        .input-row > div { flex: 1; }
+
+        /* Slider Customizado */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            margin: 10px 0;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 18px;
+            width: 18px;
+            border-radius: 50%;
+            background: var(--primary);
+            cursor: pointer;
+            margin-top: -7px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.1s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Resultados */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid transparent;
+        }
+        
+        .kpi-card.highlight { background: #eff6ff; border-color: #dbeafe; }
+        .kpi-label { font-size: 0.75rem; color: var(--gray); display: block; margin-bottom: 6px; text-transform: uppercase; font-weight: 600; }
+        .kpi-value { font-size: 1.25rem; font-weight: 800; color: var(--dark); letter-spacing: -0.5px; }
+        
+        .kpi-value.positive { color: var(--success); }
+        .kpi-value.negative { color: var(--danger); }
+
+        .chart-container {
+            position: relative;
+            height: 220px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .breakdown-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        
+        .breakdown-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--border);
+            color: var(--gray);
+        }
+        
+        .breakdown-list li:last-child { border-bottom: none; }
+        .breakdown-list li strong { color: var(--dark); }
+
+        /* Responsividade */
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+            .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .badge { align-self: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <h1>Flip Imobiliário Pro</h1>
+            <div style="font-size: 0.9rem; color: var(--gray); margin-top: 4px;">Calculadora de Viabilidade Financeira</div>
+        </div>
+        <span class="badge">BETA 2.0</span>
+    </div>
+
+    <!-- Coluna Esquerda: Inputs -->
+    <div class="input-section">
+        
+        <!-- 1. Aquisição -->
+        <div class="card">
+            <h2>1. Aquisição</h2>
+            <div class="form-group">
+                <label>Valor de Compra / Arremate (R$)</label>
+                <input type="number" id="purchasePrice" value="300000" step="1000">
+            </div>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>ITBI (%) <span class="hint">Méd: 3%</span></label>
+                    <input type="number" id="itbiRate" value="3" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Cartório/Taxas (%) <span class="hint">Méd: 1.5%</span></label>
+                    <input type="number" id="registryRate" value="1.5" step="0.1">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Comissão Leiloeiro/Interm. (%) <span class="hint">Leilão: 5%</span></label>
+                <input type="number" id="auctioneerRate" value="5" step="0.1">
+            </div>
+        </div>
+
+        <!-- 2. Reforma -->
+        <div class="card">
+            <h2>2. Reforma & Obras</h2>
+            <div class="form-group">
+                <label>Área do Imóvel (m²)</label>
+                <input type="number" id="areaSize" value="70">
+            </div>
+            <div class="form-group">
+                <label>Padrão de Acabamento</label>
+                <select id="finishStandard">
+                    <option value="custom">Personalizado</option>
+                    <option value="1000">Baixo (R$ 1.000/m²)</option>
+                    <option value="2000" selected>Médio (R$ 2.000/m²)</option>
+                    <option value="3500">Alto (R$ 3.500/m²)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Custo por m² (R$)</label>
+                <input type="number" id="costPerSqm" value="2000">
+            </div>
+            <div class="form-group">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <label style="margin:0;">Margem de Imprevistos</label>
+                    <span id="marginDisplay" style="color:var(--primary); font-weight:700; font-size:0.9rem;">10%</span>
+                </div>
+                <input type="range" id="contingencyMargin" min="0" max="30" value="10">
+            </div>
+        </div>
+
+        <!-- 3. Holding & Venda -->
+        <div class="card">
+            <h2>3. Holding (Tempo) & Saída</h2>
+            <div class="input-row">
+                <div class="form-group">
+                    <label>Tempo de Projeto (Meses)</label>
+                    <input type="number" id="projectMonths" value="6">
+                </div>
+                <div class="form-group">
+                    <label>Custo Fixo Mensal (R$)<span class="hint">Cond+IPTU</span></label>
+                    <input type="number" id="monthlyHoldingCost" value="800">
+                </div>
+            </div>
+            <hr style="border: 0; border-top: 1px dashed var(--border); margin: 24px 0;">
+            <div class="form-group">
+                <label>Valor Estimado de Venda (R$)</label>
+                <input type="number" id="salePrice" value="550000" step="1000" style="border-color: var(--success); background-color: #f0fdf4;">
+            </div>
+            <div class="form-group">
+                <label>Comissão Corretor Venda (%)</label>
+                <input type="number" id="brokerCommission" value="5" step="0.5">
+            </div>
+        </div>
+    </div>
+
+    <!-- Coluna Direita: Resultados -->
+    <div class="result-section">
+        
+        <div class="card" style="position: sticky; top: 20px;">
+            <h2>Análise de Viabilidade</h2>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card highlight">
+                    <span class="kpi-label">Custo Total Projeto</span>
+                    <span class="kpi-value" id="totalCostDisplay">R$ 0,00</span>
+                </div>
+                <div class="kpi-card highlight">
+                    <span class="kpi-label">Receita Líq. Venda</span>
+                    <span class="kpi-value" id="netRevenueDisplay">R$ 0,00</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">Lucro Líquido</span>
+                    <span class="kpi-value" id="netProfitDisplay">R$ 0,00</span>
+                </div>
+                <div class="kpi-card">
+                    <span class="kpi-label">ROI (Retorno)</span>
+                    <span class="kpi-value" id="roiDisplay">0%</span>
+                </div>
+            </div>
+
+            <!-- Gráfico -->
+            <div class="chart-container">
+                <canvas id="flipChart"></canvas>
+            </div>
+
+            <div style="background: #f8fafc; border-radius: 8px; padding: 16px; border: 1px solid var(--border);">
+                <p style="margin-top:0; font-size:0.8rem; text-transform:uppercase; color:var(--gray); font-weight:700;">Detalhamento dos Custos</p>
+                <ul id="costBreakdown" class="breakdown-list">
+                    <!-- Preenchido via JS -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- Configuração e Seletores ---
+    const inputs = document.querySelectorAll('input, select');
+    const ctx = document.getElementById('flipChart').getContext('2d');
+    
+    // Formatador de Moeda
+    const formatCurrency = (value) => {
+        return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    };
+
+    // --- Lógica do Gráfico Chart.js ---
+    // Configurações Globais de fonte para o Chart.js
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+
+    let flipChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Investimento Total', 'Valor de Venda'],
+            datasets: [
+                {
+                    label: 'Valor',
+                    data: [0, 0], // Placeholders
+                    backgroundColor: ['#94a3b8', '#10b981'],
+                    borderRadius: 8,
+                    barThickness: 50,
+                    borderSkipped: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#1e293b',
+                    padding: 12,
+                    titleFont: { size: 13 },
+                    bodyFont: { size: 14, weight: 'bold' },
+                    displayColors: false,
+                    callbacks: {
+                        label: function(context) {
+                            return formatCurrency(context.raw);
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9' },
+                    ticks: {
+                        callback: function(value) { return 'R$ ' + value/1000 + 'k'; },
+                        font: { size: 11 }
+                    },
+                    border: { display: false }
+                },
+                x: {
+                    grid: { display: false },
+                    border: { display: false }
+                }
+            }
+        }
+    });
+
+    // --- Lógica de Negócio ---
+
+    function updatePresets() {
+        const standard = document.getElementById('finishStandard').value;
+        const costInput = document.getElementById('costPerSqm');
+        
+        if (standard !== 'custom') {
+            costInput.value = standard;
+            // Efeito visual rápido para indicar mudança
+            costInput.style.backgroundColor = "#e0f2fe";
+            setTimeout(() => costInput.style.backgroundColor = "#fdfdfd", 300);
+        }
+        calculate();
+    }
+
+    function calculate() {
+        // 1. Obter Valores (Parse Float seguro)
+        const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+        // Aquisição
+        const purchasePrice = getVal('purchasePrice');
+        const itbiRate = getVal('itbiRate');
+        const registryRate = getVal('registryRate');
+        const auctioneerRate = getVal('auctioneerRate');
+
+        // Reforma
+        const areaSize = getVal('areaSize');
+        const costPerSqm = getVal('costPerSqm');
+        const marginPct = getVal('contingencyMargin');
+
+        // Holding
+        const months = getVal('projectMonths');
+        const monthlyCost = getVal('monthlyHoldingCost');
+
+        // Venda
+        const salePrice = getVal('salePrice');
+        const brokerRate = getVal('brokerCommission');
+
+        // --- Cálculos ---
+
+        // Custos de Aquisição
+        const acquisitionCosts = purchasePrice * ((itbiRate + registryRate + auctioneerRate) / 100);
+        
+        // Custos de Reforma
+        const baseRenovation = areaSize * costPerSqm;
+        const contingency = baseRenovation * (marginPct / 100);
+        const totalRenovation = baseRenovation + contingency;
+
+        // Custos de Holding
+        const totalHolding = months * monthlyCost;
+
+        // Custos de Venda (Comissão)
+        const sellingCosts = salePrice * (brokerRate / 100);
+
+        // Totais
+        const totalProjectCost = purchasePrice + acquisitionCosts + totalRenovation + totalHolding;
+        const netRevenue = salePrice - sellingCosts;
+        
+        // Lucro Líquido = Receita Líquida - Custo Total Projeto
+        const netProfit = netRevenue - totalProjectCost;
+        
+        // ROI = (Lucro Líquido / Custo Total Investido) * 100
+        const roi = totalProjectCost > 0 ? (netProfit / totalProjectCost) * 100 : 0;
+
+        // --- Atualizar UI ---
+        
+        // Texto do Slider
+        document.getElementById('marginDisplay').textContent = marginPct + '%';
+
+        // KPIs
+        document.getElementById('totalCostDisplay').textContent = formatCurrency(totalProjectCost);
+        document.getElementById('netRevenueDisplay').textContent = formatCurrency(netRevenue);
+        
+        const profitEl = document.getElementById('netProfitDisplay');
+        profitEl.textContent = formatCurrency(netProfit);
+        profitEl.className = 'kpi-value ' + (netProfit >= 0 ? 'positive' : 'negative');
+
+        const roiEl = document.getElementById('roiDisplay');
+        roiEl.textContent = roi.toFixed(2) + '%';
+        roiEl.className = 'kpi-value ' + (roi >= 0 ? 'positive' : 'negative');
+
+        // Lista de Detalhamento
+        const breakdownHtml = `
+            <li><strong>Imóvel:</strong> <span>${formatCurrency(purchasePrice)}</span></li>
+            <li><strong>Taxas de Entrada:</strong> <span>${formatCurrency(acquisitionCosts)}</span></li>
+            <li><strong>Reforma (Obras):</strong> <span>${formatCurrency(totalRenovation)}</span></li>
+            <li><strong>Holding (${months} meses):</strong> <span>${formatCurrency(totalHolding)}</span></li>
+            <li><strong>Comissão Venda:</strong> <span>${formatCurrency(sellingCosts)}</span></li>
+        `;
+        document.getElementById('costBreakdown').innerHTML = breakdownHtml;
+
+        // Atualizar Gráfico
+        const totalOutflow = totalProjectCost + sellingCosts; // Para visualização comparativa de escala
+
+        flipChart.data.datasets[0].data = [totalProjectCost + sellingCosts, salePrice];
+        // Cores Dinâmicas
+        flipChart.data.datasets[0].backgroundColor = [
+            '#94a3b8', // Custo (Cinza)
+            netProfit >= 0 ? '#10b981' : '#ef4444' // Venda (Verde ou Vermelho)
+        ];
+        flipChart.update();
+    }
+
+    // --- Listeners ---
+    inputs.forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Listener específico para o select de padrão
+    document.getElementById('finishStandard').addEventListener('change', updatePresets);
+
+    // Inicialização
+    calculate();
+
+</script>
+
+</body>
+</html>
