@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Mapa da Virada Financeira</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f0f9ff; }
+        .tab-active { border-bottom: 3px solid #0ea5e9; color: #0284c7; font-weight: 600; }
+        .tab-inactive { color: #64748b; font-weight: 400; }
+        .tab-inactive:hover { color: #334155; }
+        
+        /* Brick Animation */
+        .brick { transition: background-color 0.4s ease, transform 0.2s; }
+        .brick:hover { transform: scale(1.05); }
+        
+        /* Smooth fade for tabs */
+        .tab-content { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Slide up animation for Module 4 results */
+        .slide-up { animation: slideUp 0.5s ease-out forwards; }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-slate-200 shadow-sm z-10 flex-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <div class="bg-blue-600 text-white p-2 rounded-lg shadow-lg">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900">Mapa da Virada <span class="text-blue-600">Financeira</span></h1>
+            </div>
+            <div class="text-sm text-slate-500 hidden sm:block">
+                <i class="fa-solid fa-shield-halved mr-1"></i> Ambiente Seguro & Local
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <nav class="bg-white border-b border-slate-200 flex-none overflow-x-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex space-x-6 min-w-max">
+                <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-active py-4 px-1 inline-flex items-center gap-2 text-sm border-b-2 border-transparent">
+                    <i class="fa-solid fa-list-check"></i> 1. Inventário
+                </button>
+                <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-inactive py-4 px-1 inline-flex items-center gap-2 text-sm border-b-2 border-transparent">
+                    <i class="fa-solid fa-right-left"></i> 2. Simulador
+                </button>
+                <button onclick="switchTab('tab3')" id="btn-tab3" class="tab-inactive py-4 px-1 inline-flex items-center gap-2 text-sm border-b-2 border-transparent">
+                    <i class="fa-solid fa-cubes-stacked"></i> 3. Mapa Visual
+                </button>
+                <button onclick="switchTab('tab4')" id="btn-tab4" class="tab-inactive py-4 px-1 inline-flex items-center gap-2 text-sm border-b-2 border-transparent">
+                    <i class="fa-solid fa-scale-balanced"></i> 4. Raio-X (Negociação)
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 overflow-y-auto bg-slate-50 p-4 sm:p-8">
+        <div class="max-w-7xl mx-auto">
+            
+            <!-- MODULE 1: INVENTORY & STRATEGY -->
+            <div id="tab1" class="tab-content space-y-6">
+                
+                <!-- Intro Card -->
+                <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fa-solid fa-circle-info text-blue-500"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                <span class="font-bold">Princípio Comportamental:</span> Enfrentar os números é o passo mais difícil. Liste tudo sem julgamentos. O sistema calculará a melhor rota para você.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Left: Inputs -->
+                    <div class="lg:col-span-5 space-y-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
+                            <h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-pen-to-square text-emerald-500"></i> Cadastro de Dívidas
+                            </h2>
+                            
+                            <!-- Global Input -->
+                            <div class="mb-6 p-4 bg-emerald-50 rounded-lg border border-emerald-100">
+                                <label class="block text-sm font-medium text-emerald-900 mb-1">Quanto você tem extra por mês?</label>
+                                <div class="relative rounded-md shadow-sm">
+                                    <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                        <span class="text-emerald-600 sm:text-sm">R$</span>
+                                    </div>
+                                    <input type="number" id="extraPayment" value="200" class="block w-full rounded-md border-emerald-300 pl-10 focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm py-2" placeholder="0,00" oninput="calculateStrategies()">
+                                </div>
+                                <p class="text-xs text-emerald-700 mt-1">Valor além dos pagamentos mínimos.</p>
+                            </div>
+
+                            <!-- Debt Form -->
+                            <div class="space-y-3 border-t pt-4">
+                                <div>
+                                    <label class="text-xs font-semibold text-slate-500 uppercase">Nome da Dívida</label>
+                                    <input type="text" id="debtName" placeholder="Ex: Cartão Visa" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                                </div>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <div>
+                                        <label class="text-xs font-semibold text-slate-500 uppercase">Saldo (R$)</label>
+                                        <input type="number" id="debtBalance" placeholder="1000" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-semibold text-slate-500 uppercase">Juros (% a.m.)</label>
+                                        <input type="number" id="debtRate" placeholder="12" step="0.1" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                                    </div>
+                                    <div>
+                                        <label class="text-xs font-semibold text-slate-500 uppercase">Mínimo (R$)</label>
+                                        <input type="number" id="debtMin" placeholder="100" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-3 py-2 border">
+                                    </div>
+                                </div>
+                                <button onclick="addDebt()" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-slate-800 hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 mt-2 transition-colors">
+                                    <i class="fa-solid fa-plus mr-2 mt-1"></i> Adicionar Dívida
+                                </button>
+                            </div>
+
+                            <!-- List -->
+                            <div class="mt-6">
+                                <h3 class="text-sm font-medium text-slate-700 mb-2">Dívidas Cadastradas</h3>
+                                <ul id="debtList" class="divide-y divide-slate-100 max-h-48 overflow-y-auto">
+                                    <!-- Populated via JS -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Comparison -->
+                    <div class="lg:col-span-7 space-y-6">
+                        
+                        <!-- Cards Comparison -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Snowball -->
+                            <div id="cardSnowball" class="bg-white p-6 rounded-xl shadow-sm border-2 border-transparent hover:border-blue-100 transition-all cursor-pointer relative" onclick="selectStrategy('snowball')">
+                                <div class="absolute top-3 right-3 text-blue-100 text-4xl opacity-20"><i class="fa-solid fa-snowflake"></i></div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-1">Bola de Neve</h3>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    Foco Psicológico
+                                </span>
+                                <p class="text-xs text-slate-500 mt-2">Paga as dívidas menores primeiro. Gera vitórias rápidas e motivação.</p>
+                                
+                                <div class="mt-4 space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Tempo Total:</span>
+                                        <span class="font-bold text-slate-900" id="sbTime">--</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Juros Totais:</span>
+                                        <span class="font-bold text-rose-600" id="sbInterest">--</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+                                    <div id="btnSelectSB" class="text-sm text-slate-400 font-medium"><i class="fa-regular fa-circle"></i> Selecionar</div>
+                                </div>
+                            </div>
+
+                            <!-- Avalanche -->
+                            <div id="cardAvalanche" class="bg-white p-6 rounded-xl shadow-sm border-2 border-transparent hover:border-emerald-100 transition-all cursor-pointer relative" onclick="selectStrategy('avalanche')">
+                                <div class="absolute top-3 right-3 text-emerald-100 text-4xl opacity-20"><i class="fa-solid fa-mountain"></i></div>
+                                <h3 class="text-lg font-bold text-slate-800 mb-1">Avalanche</h3>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">
+                                    Foco Matemático
+                                </span>
+                                <p class="text-xs text-slate-500 mt-2">Ataca os juros mais altos primeiro. A opção mais barata no longo prazo.</p>
+                                
+                                <div class="mt-4 space-y-2">
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Tempo Total:</span>
+                                        <span class="font-bold text-slate-900" id="avTime">--</span>
+                                    </div>
+                                    <div class="flex justify-between text-sm">
+                                        <span class="text-slate-600">Economia:</span>
+                                        <span class="font-bold text-emerald-600" id="avSavings">--</span>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t border-slate-100 text-center">
+                                    <div id="btnSelectAV" class="text-sm text-slate-400 font-medium"><i class="fa-regular fa-circle"></i> Selecionar</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chart -->
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
+                            <h3 class="text-sm font-semibold text-slate-600 mb-4">Projeção de Saldo Devedor</h3>
+                            <div class="relative h-64 w-full">
+                                <canvas id="payoffChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 2: SWAP SIMULATOR -->
+            <div id="tab2" class="hidden tab-content">
+                <div class="max-w-4xl mx-auto space-y-8">
+                    
+                    <div class="text-center space-y-2">
+                        <h2 class="text-2xl font-bold text-slate-900">Arbitragem de Dívida</h2>
+                        <p class="text-slate-600 max-w-2xl mx-auto">
+                            A estratégia mais inteligente para quem está sufocado: trocar várias dívidas caras por uma única dívida mais barata e longa.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden border border-slate-200">
+                        <div class="p-6 md:p-8 grid md:grid-cols-2 gap-8 items-center">
+                            
+                            <!-- Current Situation -->
+                            <div class="space-y-4">
+                                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b pb-2">Situação Atual (Calculada)</h3>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-600">Dívida Total</span>
+                                    <span class="text-xl font-bold text-slate-900" id="simCurrentTotal">R$ 0,00</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-slate-600">Média de Juros (Ponderada)</span>
+                                    <span class="text-lg font-semibold text-rose-500" id="simCurrentRate">0%</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-rose-50 p-3 rounded-lg border border-rose-100">
+                                    <span class="text-rose-900 font-medium">Pagamento Mensal Atual</span>
+                                    <span class="text-xl font-bold text-rose-700" id="simCurrentPayment">R$ 0,00</span>
+                                </div>
+                            </div>
+
+                            <!-- New Scenario -->
+                            <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 space-y-4">
+                                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider border-b pb-2 mb-4">Simulação de Empréstimo Único</h3>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Taxa Novo Empréstimo (% a.m.)</label>
+                                    <input type="number" id="newLoanRate" step="0.01" value="2.5" class="w-full rounded-md border-slate-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 border px-3 py-2" oninput="calculateSwap()">
+                                    <p class="text-xs text-slate-500 mt-1">Ex: Consignado ou Garantia de Imóvel/Veículo</p>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-1">Prazo (Meses)</label>
+                                    <input type="range" id="newLoanTerm" min="12" max="96" value="48" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" oninput="calculateSwap()">
+                                    <div class="flex justify-between text-xs text-slate-500 mt-1">
+                                        <span>12x</span>
+                                        <span id="termDisplay" class="font-bold text-blue-600">48x</span>
+                                        <span>96x</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Results Footer -->
+                        <div class="bg-emerald-50 p-6 border-t border-emerald-100">
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <p class="text-sm text-emerald-800 mb-1">Nova Parcela Estimada</p>
+                                    <p class="text-3xl font-bold text-emerald-600" id="simNewPayment">R$ 0,00</p>
+                                </div>
+                                <div class="bg-white/60 p-4 rounded-lg border border-emerald-100">
+                                    <div class="flex items-center gap-3">
+                                        <div class="bg-emerald-100 text-emerald-600 rounded-full p-2">
+                                            <i class="fa-solid fa-wind"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-slate-700">Alívio no Fluxo de Caixa</p>
+                                            <p class="text-emerald-600 font-bold" id="simCashflowRelief">+ R$ 0,00 / mês</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 3: FREEDOM MAP -->
+            <div id="tab3" class="hidden tab-content h-full flex flex-col">
+                <div class="flex-none mb-6 flex flex-col sm:flex-row justify-between items-end gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">O Mapa da Liberdade</h2>
+                        <p class="text-slate-600 text-sm mt-1">
+                            Gamificação visual. Cada tijolo representa uma parte da sua dívida. Veja-os desaparecer.
+                        </p>
+                    </div>
+                    <div class="w-full sm:w-64 bg-white p-3 rounded-lg shadow-sm border border-slate-200">
+                        <label class="text-xs font-semibold text-slate-500 uppercase block mb-2">Simular Pagamento (Visual)</label>
+                        <input type="range" id="freedomSlider" min="0" max="100" value="0" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-500" oninput="updateBricks()">
+                        <div class="flex justify-between mt-1">
+                            <span class="text-xs text-slate-400">0%</span>
+                            <span class="text-xs font-bold text-emerald-600" id="progressPercent">0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-white rounded-xl shadow-inner border border-slate-200 p-6 overflow-hidden relative">
+                    <!-- Wall Container -->
+                    <div id="brickWall" class="w-full h-full flex flex-wrap gap-1 content-start overflow-y-auto pr-2">
+                        <!-- Bricks generated via JS -->
+                    </div>
+                    
+                    <!-- Overlay Message when 100% -->
+                    <div id="freedomMessage" class="hidden absolute inset-0 bg-white/90 flex flex-col items-center justify-center z-10 backdrop-blur-sm">
+                        <i class="fa-solid fa-dove text-6xl text-emerald-500 mb-4 animate-bounce"></i>
+                        <h3 class="text-3xl font-bold text-slate-800">Liberdade Alcançada!</h3>
+                        <p class="text-slate-600">Você destruiu o muro da dívida.</p>
+                    </div>
+                </div>
+                
+                <div class="flex-none mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 text-center text-xs text-slate-500">
+                    <div class="flex items-center gap-2 justify-center"><div class="w-4 h-4 bg-rose-400 rounded-sm"></div> Pendente</div>
+                    <div class="flex items-center gap-2 justify-center"><div class="w-4 h-4 bg-emerald-400 rounded-sm"></div> Pago</div>
+                    <div class="col-span-2 sm:col-span-2 text-right">
+                        1 Tijolo = <span id="brickValue" class="font-bold text-slate-700">R$ 0,00</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 4: DEBT X-RAY (NEW) -->
+            <div id="tab4" class="hidden tab-content">
+                <div class="w-full bg-white rounded-2xl shadow-xl overflow-hidden grid grid-cols-1 lg:grid-cols-2 border border-slate-100">
+                    
+                    <!-- Left: Inputs -->
+                    <div class="p-8 bg-white border-b lg:border-b-0 lg:border-r border-slate-100">
+                        <header class="mb-8">
+                            <div class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-100 text-blue-600 mb-4">
+                                <i class="fa-solid fa-scale-balanced text-xl"></i>
+                            </div>
+                            <h2 class="text-2xl font-bold text-slate-900">Raio-X da Dívida</h2>
+                            <p class="text-slate-500 text-sm mt-1">Descubra se o "desconto" do banco é real ou armadilha.</p>
+                        </header>
+            
+                        <form id="calcForm" class="space-y-5" onsubmit="event.preventDefault(); calculateDebtXRay();">
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Valor Original (R$)</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-2 text-slate-400">R$</span>
+                                    <input type="number" id="xrayOriginalValue" step="0.01" class="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition" placeholder="Ex: 1000.00" required>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">Valor da compra ou saque inicial, sem juros.</p>
+                            </div>
+            
+                            <div>
+                                <label class="block text-sm font-semibold text-slate-700 mb-1">Data de Início da Dívida</label>
+                                <input type="date" id="xrayStartDate" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" required>
+                            </div>
+            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Juros do Banco (% a.m.)</label>
+                                    <input type="number" id="xrayBankRate" step="0.1" value="12" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-slate-700 mb-1">Proposta Deles (R$)</label>
+                                    <input type="number" id="xrayBankOffer" step="0.01" class="w-full px-4 py-2 bg-slate-50 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition" placeholder="Valor p/ quitar" required>
+                                </div>
+                            </div>
+            
+                            <button type="submit" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 rounded-lg shadow-lg shadow-slate-500/20 transition transform hover:-translate-y-0.5 active:translate-y-0">
+                                Analisar Proposta
+                            </button>
+                        </form>
+            
+                        <div class="mt-8 p-4 bg-blue-50 rounded-lg border border-blue-100">
+                            <h4 class="text-sm font-bold text-blue-800 mb-1"><i class="fa-solid fa-circle-info mr-2"></i>Como funciona o cálculo?</h4>
+                            <p class="text-xs text-blue-700 leading-relaxed">
+                                Comparamos a evolução da dívida usando os juros compostos do banco contra a correção judicial (IPCA est. + 1% juros simples), que é o padrão usado por juízes em revisionais.
+                            </p>
+                        </div>
+                    </div>
+            
+                    <!-- Right: Results -->
+                    <div id="xrayResultsArea" class="bg-slate-50 p-8 flex flex-col justify-center items-center text-center relative">
+                        
+                        <div id="xrayEmptyState" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 p-8">
+                            <i class="fa-solid fa-chart-pie text-6xl mb-4 opacity-20"></i>
+                            <p>Preencha os dados ao lado para gerar o relatório.</p>
+                        </div>
+            
+                        <div id="xrayResultContent" class="w-full h-full flex flex-col hidden slide-up">
+                            <h2 class="text-lg font-bold text-slate-800 mb-4">Resultado da Análise</h2>
+            
+                            <!-- Chart -->
+                            <div class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 mb-6 h-64 w-full relative">
+                                <canvas id="xrayChart"></canvas>
+                            </div>
+            
+                            <!-- Cards de Comparação -->
+                            <div class="grid grid-cols-2 gap-4 mb-6 w-full">
+                                <div class="bg-white p-3 rounded-lg border-l-4 border-rose-500 shadow-sm text-left">
+                                    <span class="text-xs font-bold text-rose-500 uppercase">Cenário Banco</span>
+                                    <div class="text-lg font-bold text-slate-800" id="displayBankVal">R$ 0,00</div>
+                                    <div class="text-[10px] text-slate-400">Juros sobre juros</div>
+                                </div>
+                                <div class="bg-white p-3 rounded-lg border-l-4 border-emerald-500 shadow-sm text-left">
+                                    <span class="text-xs font-bold text-emerald-500 uppercase">Justo (Judicial)</span>
+                                    <div class="text-lg font-bold text-slate-800" id="displayFairVal">R$ 0,00</div>
+                                    <div class="text-[10px] text-slate-400">Correção + Juros Simples</div>
+                                </div>
+                            </div>
+            
+                            <!-- Veredito -->
+                            <div id="verdictBox" class="w-full p-4 rounded-lg mb-6 text-left text-sm border">
+                                <!-- Preenchido via JS -->
+                            </div>
+            
+                            <!-- Ação -->
+                            <div class="mt-auto w-full">
+                                <p class="text-xs text-slate-500 mb-2 text-center">Use este texto para responder o banco:</p>
+                                <button id="btnCopyNegotiation" onclick="copyNegotiation()" class="w-full group bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-lg transition flex items-center justify-center gap-2 shadow-md">
+                                    <i class="fa-regular fa-copy"></i>
+                                    <span>Copiar Texto de Negociação</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <p class="text-slate-400 text-xs">Ferramenta educativa. Não substitui consultoria jurídica. O cálculo "Justo" baseia-se em jurisprudência comum (INPC + 1% a.m.), mas cada caso é um caso.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- JS Logic -->
+    <script>
+        // --- State Management ---
+        const state = {
+            debts: [
+                { id: 1, name: 'Cartão de Crédito', balance: 5000, rate: 14.0, min: 250 },
+                { id: 2, name: 'Cheque Especial', balance: 2000, rate: 12.5, min: 150 },
+                { id: 3, name: 'Empréstimo Pessoal', balance: 10000, rate: 4.5, min: 400 }
+            ],
+            extraPayment: 200,
+            strategy: 'snowball', // 'snowball' or 'avalanche'
+            chartInstance: null,
+            xrayChartInstance: null,
+            negotiationText: ""
+        };
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDebtList();
+            calculateStrategies();
+            calculateSwap(); // Initial calc for module 2
+            renderBricks(); // Initial render for module 3
+        });
+
+        // --- Formatting Utils ---
+        const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+
+        // --- Tab Navigation ---
+        function switchTab(tabId) {
+            // Hide all
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(el => {
+                el.classList.remove('tab-active', 'border-blue-500', 'text-blue-600');
+                el.classList.add('tab-inactive', 'border-transparent');
+            });
+
+            // Show selected
+            document.getElementById(tabId).classList.remove('hidden');
+            const btn = document.getElementById('btn-' + tabId);
+            btn.classList.add('tab-active', 'border-blue-500', 'text-blue-600');
+            btn.classList.remove('tab-inactive', 'border-transparent');
+
+            // Specific refresh triggers
+            if(tabId === 'tab2') calculateSwap();
+            if(tabId === 'tab3') renderBricks();
+            if(tabId === 'tab1' && state.chartInstance) state.chartInstance.resize();
+            if(tabId === 'tab4' && state.xrayChartInstance) state.xrayChartInstance.resize();
+        }
+
+        // --- Module 1: Inventory & Calculations ---
+
+        function addDebt() {
+            const name = document.getElementById('debtName').value || 'Dívida Sem Nome';
+            const balance = parseFloat(document.getElementById('debtBalance').value);
+            const rate = parseFloat(document.getElementById('debtRate').value);
+            const min = parseFloat(document.getElementById('debtMin').value);
+
+            if (isNaN(balance) || isNaN(rate) || isNaN(min)) {
+                alert('Por favor, preencha todos os valores numéricos.');
+                return;
+            }
+
+            state.debts.push({ id: Date.now(), name, balance, rate, min });
+            
+            // Clear inputs
+            document.getElementById('debtName').value = '';
+            document.getElementById('debtBalance').value = '';
+            document.getElementById('debtRate').value = '';
+            document.getElementById('debtMin').value = '';
+
+            renderDebtList();
+            calculateStrategies();
+            renderBricks(); // Update Module 3 data
+        }
+
+        function removeDebt(id) {
+            state.debts = state.debts.filter(d => d.id !== id);
+            renderDebtList();
+            calculateStrategies();
+            renderBricks();
+        }
+
+        function renderDebtList() {
+            const list = document.getElementById('debtList');
+            list.innerHTML = '';
+            
+            state.debts.forEach(debt => {
+                const li = document.createElement('li');
+                li.className = 'py-3 flex justify-between items-center';
+                li.innerHTML = `
+                    <div>
+                        <p class="text-sm font-medium text-slate-900">${debt.name}</p>
+                        <p class="text-xs text-slate-500">${formatBRL(debt.balance)} | ${debt.rate}% a.m.</p>
+                    </div>
+                    <button onclick="removeDebt(${debt.id})" class="text-rose-400 hover:text-rose-600 text-xs font-semibold">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                `;
+                list.appendChild(li);
+            });
+        }
+
+        function selectStrategy(strat) {
+            state.strategy = strat;
+            
+            // Update UI Selection
+            const sbCard = document.getElementById('cardSnowball');
+            const avCard = document.getElementById('cardAvalanche');
+            const sbBtn = document.getElementById('btnSelectSB');
+            const avBtn = document.getElementById('btnSelectAV');
+
+            // Reset styles
+            [sbCard, avCard].forEach(c => {
+                c.classList.remove('border-blue-500', 'border-emerald-500', 'ring-2', 'ring-offset-2');
+                c.classList.add('border-transparent');
+            });
+
+            if (strat === 'snowball') {
+                sbCard.classList.remove('border-transparent');
+                sbCard.classList.add('border-blue-500', 'ring-2', 'ring-blue-100');
+                sbBtn.innerHTML = '<i class="fa-solid fa-check-circle text-blue-600"></i> Selecionado';
+                avBtn.innerHTML = '<i class="fa-regular fa-circle"></i> Selecionar';
+            } else {
+                avCard.classList.remove('border-transparent');
+                avCard.classList.add('border-emerald-500', 'ring-2', 'ring-emerald-100');
+                avBtn.innerHTML = '<i class="fa-solid fa-check-circle text-emerald-600"></i> Selecionado';
+                sbBtn.innerHTML = '<i class="fa-regular fa-circle"></i> Selecionar';
+            }
+
+            calculateStrategies(); // Re-render chart with emphasis
+        }
+
+        function simulatePayoff(strategyType, extra) {
+            // Deep copy debts to not mutate state
+            let currentDebts = JSON.parse(JSON.stringify(state.debts));
+            let months = 0;
+            let totalInterest = 0;
+            let totalBalanceHistory = [currentDebts.reduce((acc, d) => acc + d.balance, 0)];
+
+            // Limit to prevent infinite loops (e.g., if interest > payment)
+            const MAX_MONTHS = 360; 
+
+            while (currentDebts.some(d => d.balance > 0.01) && months < MAX_MONTHS) {
+                months++;
+                let monthlyExtra = parseFloat(document.getElementById('extraPayment').value) || 0;
+
+                // Accrue Interest
+                currentDebts.forEach(d => {
+                    if (d.balance > 0) {
+                        const interest = d.balance * (d.rate / 100);
+                        d.balance += interest;
+                        totalInterest += interest;
+                    }
+                });
+
+                // Determine Order
+                if (strategyType === 'snowball') {
+                    // Sort by Balance ASC
+                    currentDebts.sort((a, b) => a.balance - b.balance);
+                } else {
+                    // Sort by Rate DESC
+                    currentDebts.sort((a, b) => b.rate - a.rate);
+                }
+
+                // Apply Minimum Payments
+                currentDebts.forEach(d => {
+                    if (d.balance > 0) {
+                        let payment = d.min;
+                        if (d.balance < payment) {
+                            // Pay off remaining, add excess to extra pile
+                            monthlyExtra += (payment - d.balance);
+                            payment = d.balance;
+                        }
+                        d.balance -= payment;
+                    } else {
+                        // If debt is paid, its minimum payment is now freed up ("Snowball effect")
+                        monthlyExtra += d.min;
+                    }
+                });
+
+                // Apply Extra Payment (Snowball/Avalanche Power) to the first debt in list
+                for (let d of currentDebts) {
+                    if (d.balance > 0) {
+                        if (monthlyExtra > d.balance) {
+                            monthlyExtra -= d.balance;
+                            d.balance = 0;
+                        } else {
+                            d.balance -= monthlyExtra;
+                            monthlyExtra = 0;
+                        }
+                        if (monthlyExtra <= 0) break;
+                    }
+                }
+
+                // Record history
+                totalBalanceHistory.push(currentDebts.reduce((acc, d) => acc + d.balance, 0));
+            }
+
+            return { months, totalInterest, history: totalBalanceHistory };
+        }
+
+        function calculateStrategies() {
+            if (state.debts.length === 0) return;
+
+            const sbResult = simulatePayoff('snowball');
+            const avResult = simulatePayoff('avalanche');
+
+            // UI Update
+            document.getElementById('sbTime').innerText = `${sbResult.months} meses`;
+            document.getElementById('sbInterest').innerText = formatBRL(sbResult.totalInterest);
+            
+            document.getElementById('avTime').innerText = `${avResult.months} meses`;
+            const savings = sbResult.totalInterest - avResult.totalInterest;
+            document.getElementById('avSavings').innerText = savings > 0 ? formatBRL(savings) : 'R$ 0,00';
+
+            updateChart(sbResult.history, avResult.history);
+        }
+
+        function updateChart(sbData, avData) {
+            const ctx = document.getElementById('payoffChart').getContext('2d');
+            
+            if (state.chartInstance) {
+                state.chartInstance.destroy();
+            }
+
+            const labels = Array.from({length: Math.max(sbData.length, avData.length)}, (_, i) => `Mês ${i}`);
+
+            state.chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Bola de Neve',
+                            data: sbData,
+                            borderColor: '#3b82f6', // Blue
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            fill: false,
+                            tension: 0.4
+                        },
+                        {
+                            label: 'Avalanche',
+                            data: avData,
+                            borderColor: '#10b981', // Emerald
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            tension: 0.4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatBRL(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Module 2: Swap Logic ---
+
+        function calculateSwap() {
+            if (state.debts.length === 0) return;
+
+            const totalDebt = state.debts.reduce((acc, d) => acc + d.balance, 0);
+            const currentTotalPayment = state.debts.reduce((acc, d) => acc + d.min, 0);
+
+            // Weighted Average Interest Rate
+            let weightedRateSum = 0;
+            state.debts.forEach(d => {
+                weightedRateSum += (d.rate * d.balance);
+            });
+            const weightedAvgRate = weightedRateSum / totalDebt;
+
+            // New Loan Inputs
+            const newRate = parseFloat(document.getElementById('newLoanRate').value);
+            const newTerm = parseInt(document.getElementById('newLoanTerm').value);
+            document.getElementById('termDisplay').innerText = `${newTerm}x`;
+
+            // PMT Formula: P = (Pv*R) / (1 - (1 + R)^(-n))
+            // R must be decimal (2.5% = 0.025)
+            const r = newRate / 100;
+            const newPayment = (totalDebt * r) / (1 - Math.pow(1 + r, -newTerm));
+            
+            const cashFlowRelief = currentTotalPayment - newPayment;
+
+            // UI Update
+            document.getElementById('simCurrentTotal').innerText = formatBRL(totalDebt);
+            document.getElementById('simCurrentRate').innerText = `${weightedAvgRate.toFixed(2)}% a.m.`;
+            document.getElementById('simCurrentPayment').innerText = formatBRL(currentTotalPayment);
+            
+            document.getElementById('simNewPayment').innerText = formatBRL(newPayment);
+            
+            const reliefEl = document.getElementById('simCashflowRelief');
+            if (cashFlowRelief > 0) {
+                reliefEl.innerText = `+ ${formatBRL(cashFlowRelief)} / mês`;
+                reliefEl.classList.remove('text-rose-600');
+                reliefEl.classList.add('text-emerald-600');
+            } else {
+                reliefEl.innerText = `${formatBRL(cashFlowRelief)} / mês`;
+                reliefEl.classList.remove('text-emerald-600');
+                reliefEl.classList.add('text-rose-600');
+            }
+        }
+
+        // --- Module 3: Brick Wall Logic ---
+
+        function renderBricks() {
+            const container = document.getElementById('brickWall');
+            const totalDebt = state.debts.reduce((acc, d) => acc + d.balance, 0);
+            
+            // Re-render only if total changed significantly or first load
+            // For simplicity in this demo, we re-render on tab switch or data change
+            container.innerHTML = '';
+            
+            if (totalDebt === 0) {
+                container.innerHTML = '<div class="w-full text-center text-slate-400 mt-10">Sem dívidas para mapear!</div>';
+                return;
+            }
+
+            const brickCount = 100; // Fixed grid size
+            const brickValue = totalDebt / brickCount;
+            document.getElementById('brickValue').innerText = formatBRL(brickValue);
+
+            for (let i = 0; i < brickCount; i++) {
+                const brick = document.createElement('div');
+                // Calculate dimensions to fit nicely
+                brick.style.width = 'calc(10% - 4px)'; // 10 per row roughly
+                brick.style.height = '20px';
+                brick.className = 'brick bg-rose-400 rounded-sm cursor-pointer shadow-sm';
+                brick.dataset.index = i;
+                brick.title = `Tijolo #${i+1}`;
+                container.appendChild(brick);
+            }
+
+            updateBricks(); // Apply colors based on slider
+        }
+
+        function updateBricks() {
+            const sliderVal = parseInt(document.getElementById('freedomSlider').value);
+            document.getElementById('progressPercent').innerText = `${sliderVal}%`;
+            
+            const bricks = document.querySelectorAll('.brick');
+            const totalBricks = bricks.length;
+            const bricksToTurnGreen = Math.floor((sliderVal / 100) * totalBricks);
+
+            bricks.forEach((brick, index) => {
+                if (index < bricksToTurnGreen) {
+                    brick.classList.remove('bg-rose-400');
+                    brick.classList.add('bg-emerald-400');
+                } else {
+                    brick.classList.remove('bg-emerald-400');
+                    brick.classList.add('bg-rose-400');
+                }
+            });
+
+            const msg = document.getElementById('freedomMessage');
+            if (sliderVal === 100) {
+                msg.classList.remove('hidden');
+            } else {
+                msg.classList.add('hidden');
+            }
+        }
+
+        // --- Module 4: Debt X-Ray Logic ---
+
+        function calculateDebtXRay() {
+            // 1. Pegar valores
+            const originalVal = parseFloat(document.getElementById('xrayOriginalValue').value);
+            const startDateStr = document.getElementById('xrayStartDate').value;
+            const bankRate = parseFloat(document.getElementById('xrayBankRate').value) || 12; // Default 12%
+            const bankOffer = parseFloat(document.getElementById('xrayBankOffer').value);
+
+            if(!startDateStr || isNaN(originalVal) || isNaN(bankOffer)) return;
+
+            // 2. Calcular meses
+            const startDate = new Date(startDateStr);
+            const today = new Date();
+            let months = (today.getFullYear() - startDate.getFullYear()) * 12;
+            months -= startDate.getMonth();
+            months += today.getMonth();
+            if (months <= 0) months = 1;
+
+            // 3. Matemática
+            // Banco: Juros Compostos
+            const bankTotal = originalVal * Math.pow((1 + (bankRate/100)), months);
+
+            // Justo: Inflação (Est. 0.5% a.m) + Juros Mora Simples (1% a.m)
+            const inflationRate = 0.005; 
+            const legalRate = 0.01;
+            
+            // Correção Monetária (aplica-se sobre o principal)
+            const correctedPrincipal = originalVal * Math.pow((1 + inflationRate), months);
+            // Juros de Mora (1% simples sobre o valor original)
+            const interestMora = originalVal * legalRate * months;
+            
+            const fairTotal = correctedPrincipal + interestMora;
+
+            // 4. UI Update
+            document.getElementById('xrayEmptyState').classList.add('hidden');
+            document.getElementById('xrayResultContent').classList.remove('hidden');
+            
+            document.getElementById('displayBankVal').innerText = formatBRL(bankTotal);
+            document.getElementById('displayFairVal').innerText = formatBRL(fairTotal);
+
+            // Veredito Lógica
+            const verdictBox = document.getElementById('verdictBox');
+            const percentDiff = ((bankOffer / fairTotal) * 100) - 100;
+
+            if (bankOffer <= fairTotal * 1.1) {
+                // Se a oferta for menor ou até 10% maior que o justo
+                verdictBox.className = "w-full p-4 rounded-lg mb-6 text-left text-sm border bg-emerald-50 border-emerald-200 text-emerald-800";
+                verdictBox.innerHTML = `
+                    <strong class="block mb-1"><i class="fa-solid fa-check-circle mr-1"></i> Oportunidade Real!</strong>
+                    A proposta do banco (R$ ${formatBRL(bankOffer)}) está alinhada com o cálculo judicial. Vale a pena fechar acordo.
+                `;
+            } else {
+                verdictBox.className = "w-full p-4 rounded-lg mb-6 text-left text-sm border bg-rose-50 border-rose-200 text-rose-800";
+                verdictBox.innerHTML = `
+                    <strong class="block mb-1"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Cuidado: Proposta Alta</strong>
+                    Eles estão pedindo <b>${percentDiff.toFixed(0)}% a mais</b> que o valor justo. 
+                    O valor "legal" seria aprox. R$ ${formatBRL(fairTotal)}. Negocie!
+                `;
+            }
+
+            // Gerar Texto
+            state.negotiationText = `Olá. Analisei a proposta de quitação de R$ ${formatBRL(bankOffer)}. Porém, recalculei a dívida original de R$ ${formatBRL(originalVal)} aplicando apenas correção monetária e juros legais simples de 1% a.m. (padrão judicial), chegando ao valor justo de R$ ${formatBRL(fairTotal)}. Aceito fechar acordo por este valor para pagamento à vista.`;
+
+            // Renderizar Gráfico
+            renderDebtChart(originalVal, bankTotal, fairTotal, bankOffer);
+        }
+
+        function renderDebtChart(original, bankCalc, fairCalc, offer) {
+            const ctx = document.getElementById('xrayChart').getContext('2d');
+            
+            if (state.xrayChartInstance) {
+                state.xrayChartInstance.destroy();
+            }
+
+            state.xrayChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Original', 'Cálculo Banco', 'Cálculo Justo', 'Proposta Atual'],
+                    datasets: [{
+                        label: 'Valores (R$)',
+                        data: [original, bankCalc, fairCalc, offer],
+                        backgroundColor: [
+                            '#94a3b8', // Original (Cinza)
+                            '#f43f5e', // Banco (Rose)
+                            '#10b981', // Justo (Emerald)
+                            '#3b82f6'  // Proposta (Blue)
+                        ],
+                        borderRadius: 6,
+                        barThickness: 40
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.raw.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { display: false }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function copyNegotiation() {
+            if (!state.negotiationText) return;
+            
+            // Modern Clipboard API with fallback
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(state.negotiationText);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = state.negotiationText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
+
+            // Visual feedback
+            const btn = document.getElementById('btnCopyNegotiation');
+            const originalContent = btn.innerHTML;
+            
+            btn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700');
+            btn.classList.add('bg-slate-800', 'hover:bg-slate-900');
+            btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Copiado!</span>`;
+            
+            setTimeout(() => {
+                btn.classList.remove('bg-slate-800', 'hover:bg-slate-900');
+                btn.classList.add('bg-emerald-600', 'hover:bg-emerald-700');
+                btn.innerHTML = originalContent;
+            }, 2000);
+        }
+
+        // Initialize Selection
+        selectStrategy('snowball');
+
+    </script>
+</body>
+</html>
