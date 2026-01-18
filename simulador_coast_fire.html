@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Coast FIRE & Sabático</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --panel-color: #161b22;
+            --text-main: #c9d1d9;
+            --accent-green: #2ea043;
+            --accent-red: #da3633;
+            --accent-blue: #58a6ff;
+            --border-color: #30363d;
+            --font-mono: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-mono);
+            line-height: 1.5;
+            padding: 20px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background-color: var(--panel-color);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.2rem;
+            color: var(--accent-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+            padding: 2px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--accent-blue);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .section {
+            padding: 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section:nth-child(odd) {
+            border-right: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .section:nth-child(odd) { border-right: none; }
+        }
+
+        h2 {
+            font-size: 0.9rem;
+            color: var(--accent-blue);
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            color: #8b949e;
+        }
+
+        .value-display {
+            color: var(--text-main);
+            font-weight: bold;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 6px;
+            background: var(--border-color);
+            border-radius: 3px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background .15s ease-in-out;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            background: #79c0ff;
+        }
+
+        .sabbatical-section {
+            background-color: rgba(88, 166, 255, 0.05);
+            grid-column: span 2;
+            border-right: none !important;
+        }
+
+        .results {
+            grid-column: span 2;
+            padding: 30px;
+            background-color: #0d1117;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .status-box {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+        }
+
+        .status-box.success {
+            border-color: var(--accent-green);
+            background-color: rgba(46, 160, 67, 0.1);
+        }
+
+        .status-box.fail {
+            border-color: var(--accent-red);
+            background-color: rgba(218, 54, 51, 0.1);
+        }
+
+        .big-number {
+            font-size: 1.5rem;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .success-text { color: var(--accent-green); }
+        .fail-text { color: var(--accent-red); }
+        .neutral-text { color: #8b949e; }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 10px;
+            background-color: var(--border-color);
+            border-radius: 5px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--accent-green);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        /* Helper for money formatting */
+        .money { letter-spacing: -0.5px; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>> Simulador Coast FIRE</h1>
+        <span class="badge">v1.0.0</span>
+    </header>
+
+    <div class="grid">
+        <!-- Coluna 1: Dados Pessoais & Metas -->
+        <div class="section">
+            <h2>01. Perfil & Metas</h2>
+            
+            <div class="input-group">
+                <label>Idade Atual: <span id="disp_age" class="value-display">30 anos</span></label>
+                <input type="range" id="age" min="18" max="80" value="30">
+            </div>
+
+            <div class="input-group">
+                <label>Idade Aposentadoria: <span id="disp_retire_age" class="value-display">60 anos</span></label>
+                <input type="range" id="retire_age" min="30" max="90" value="60">
+            </div>
+
+            <div class="input-group">
+                <label>Despesa Mensal na Aposentadoria: <span id="disp_expenses" class="value-display">R$ 10.000</span></label>
+                <input type="range" id="expenses" min="2000" max="50000" step="500" value="10000">
+            </div>
+        </div>
+
+        <!-- Coluna 2: Dados Financeiros -->
+        <div class="section">
+            <h2>02. Patrimônio & Mercado</h2>
+
+            <div class="input-group">
+                <label>Patrimônio Líquido Atual: <span id="disp_networth" class="value-display">R$ 500.000</span></label>
+                <input type="range" id="networth" min="0" max="5000000" step="10000" value="500000">
+            </div>
+
+            <div class="input-group">
+                <label>Rentabilidade Real Anual (%): <span id="disp_rate" class="value-display">6.0%</span></label>
+                <input type="range" id="rate" min="0" max="15" step="0.1" value="6.0">
+            </div>
+            
+            <div style="margin-top: 30px; font-size: 0.8rem; color: #8b949e;">
+                <p>Número de Independência (Regra dos 4%): <span id="fi_number" style="color:white">--</span></p>
+            </div>
+        </div>
+
+        <!-- Seção Sabático -->
+        <div class="section sabbatical-section">
+            <h2>03. Simulação de Sabático (Opcional)</h2>
+            <p style="font-size: 0.8rem; color: #8b949e; margin-bottom: 15px;">
+                Impacto de parar agora e consumir parte do capital.
+            </p>
+
+            <div class="grid" style="border:none;">
+                <div class="input-group" style="padding-right: 15px;">
+                    <label>Duração do Sabático (Anos): <span id="disp_sab_years" class="value-display">0 anos</span></label>
+                    <input type="range" id="sab_years" min="0" max="10" step="1" value="0">
+                </div>
+
+                <div class="input-group">
+                    <label>Custo Anual do Sabático: <span id="disp_sab_cost" class="value-display">R$ 0</span></label>
+                    <input type="range" id="sab_cost" min="0" max="200000" step="1000" value="0">
+                </div>
+            </div>
+        </div>
+
+        <!-- Painel de Resultados -->
+        <div class="results">
+            <h2>> Diagnóstico do Sistema</h2>
+            
+            <div id="result_box" class="status-box">
+                <!-- Conteúdo injetado via JS -->
+            </div>
+
+            <div class="data-row">
+                <span>Projeção aos <span id="target_age_display">60</span> anos (sem novos aportes):</span>
+                <span id="projected_value" class="money">R$ 0,00</span>
+            </div>
+            
+            <div class="progress-bar-bg">
+                <div id="progress_fill" class="progress-bar-fill"></div>
+            </div>
+            <div style="text-align: right; font-size: 0.75rem; margin-top: 5px; color: #8b949e;">
+                Progresso para Coast FIRE
+            </div>
+
+            <div id="sabbatical_warning" style="margin-top: 20px; padding-top: 20px; border-top: 1px dashed var(--border-color); display: none;">
+                <span style="color: var(--accent-blue);">ℹ️ Impacto do Sabático:</span> 
+                Você consumirá <span id="total_sab_cost" style="color:white"></span> do seu capital e perderá <span id="lost_compound" style="color:white"></span> em crescimento potencial.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Seleção de Elementos
+    const inputs = {
+        age: document.getElementById('age'),
+        retire_age: document.getElementById('retire_age'),
+        expenses: document.getElementById('expenses'),
+        networth: document.getElementById('networth'),
+        rate: document.getElementById('rate'),
+        sab_years: document.getElementById('sab_years'),
+        sab_cost: document.getElementById('sab_cost')
+    };
+
+    const displays = {
+        age: document.getElementById('disp_age'),
+        retire_age: document.getElementById('disp_retire_age'),
+        expenses: document.getElementById('disp_expenses'),
+        networth: document.getElementById('disp_networth'),
+        rate: document.getElementById('disp_rate'),
+        sab_years: document.getElementById('disp_sab_years'),
+        sab_cost: document.getElementById('disp_sab_cost'),
+        fi_number: document.getElementById('fi_number'),
+        result_box: document.getElementById('result_box'),
+        projected_value: document.getElementById('projected_value'),
+        target_age: document.getElementById('target_age_display'),
+        progress_fill: document.getElementById('progress_fill'),
+        sabbatical_warning: document.getElementById('sabbatical_warning'),
+        total_sab_cost: document.getElementById('total_sab_cost'),
+        lost_compound: document.getElementById('lost_compound')
+    };
+
+    // Formatadores
+    const formatBRL = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(val);
+    const formatBRLCompact = (val) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', notation: "compact" }).format(val);
+
+    // Lógica Principal
+    function calculate() {
+        // Obter valores
+        let age = parseInt(inputs.age.value);
+        let retAge = parseInt(inputs.retire_age.value);
+        let expenses = parseFloat(inputs.expenses.value);
+        let currentNW = parseFloat(inputs.networth.value);
+        let rate = parseFloat(inputs.rate.value) / 100;
+        
+        let sabYears = parseInt(inputs.sab_years.value);
+        let sabCostAnnual = parseFloat(inputs.sab_cost.value);
+
+        // Validação básica de UI
+        if (retAge <= age) {
+            retAge = age + 1;
+            inputs.retire_age.value = retAge;
+        }
+
+        // 1. Atualizar Displays dos Inputs
+        displays.age.innerText = age + " anos";
+        displays.retire_age.innerText = retAge + " anos";
+        displays.expenses.innerText = formatBRL(expenses);
+        displays.networth.innerText = formatBRL(currentNW);
+        displays.rate.innerText = (rate * 100).toFixed(1) + "%";
+        displays.sab_years.innerText = sabYears + " anos";
+        displays.sab_cost.innerText = formatBRL(sabCostAnnual);
+        displays.target_age.innerText = retAge;
+
+        // 2. Cálculo do Número FIRE
+        // Regra dos 4% = Despesa Mensal * 12 / 0.04 (ou Despesa Mensal * 300)
+        const fiNumber = expenses * 300;
+        displays.fi_number.innerText = formatBRL(fiNumber);
+
+        // 3. Simulação
+        let simulationNW = currentNW;
+        let yearsUntilRetirement = retAge - age;
+        
+        // --- Fase 1: Sabático (se houver) ---
+        let totalSabCost = 0;
+        let nwWithoutSabbatical = currentNW * Math.pow((1 + rate), yearsUntilRetirement); // Para comparação
+
+        // Limitando sabático ao tempo de aposentadoria
+        if (sabYears > yearsUntilRetirement) sabYears = yearsUntilRetirement;
+
+        for (let i = 0; i < sabYears; i++) {
+            // No sabático, subtraímos o custo anual e aplicamos rendimento no restante (ou assume-se retirada no inicio/fim)
+            // Lógica: O dinheiro rende, mas você tira o custo de vida.
+            simulationNW = (simulationNW - sabCostAnnual) * (1 + rate);
+            totalSabCost += sabCostAnnual;
+        }
+
+        // --- Fase 2: Pós-Sabático (Coast) ---
+        let remainingYears = yearsUntilRetirement - sabYears;
+        if (remainingYears < 0) remainingYears = 0;
+
+        // Juros Compostos Puro no restante do tempo
+        simulationNW = simulationNW * Math.pow((1 + rate), remainingYears);
+
+        // 4. Diagnóstico
+        const isCoastFIRE = simulationNW >= fiNumber;
+        const percentage = Math.min((simulationNW / fiNumber) * 100, 100);
+        
+        // Atualizar Barra de Progresso
+        displays.progress_fill.style.width = percentage + "%";
+        if (isCoastFIRE) {
+            displays.progress_fill.style.backgroundColor = "var(--accent-green)";
+        } else {
+            displays.progress_fill.style.backgroundColor = percentage > 75 ? "var(--accent-blue)" : "var(--accent-red)";
+        }
+
+        displays.projected_value.innerText = formatBRL(simulationNW);
+
+        // Texto de Decisão
+        let html = "";
+        if (isCoastFIRE) {
+            displays.result_box.className = "status-box success";
+            html += `<div class="big-number success-text">COAST FIRE ATINGIDO</div>`;
+            html += `<p>Parabéns. Se você não investir mais nenhum centavo (e seguir o plano do sabático, se houver), seu patrimônio projetado de <strong>${formatBRLCompact(simulationNW)}</strong> cobrirá sua meta de ${formatBRLCompact(fiNumber)}.</p>`;
+        } else {
+            displays.result_box.className = "status-box fail";
+            html += `<div class="big-number fail-text">AINDA NÃO LÁ</div>`;
+            const shortfall = fiNumber - simulationNW;
+            // Cálculo do Valor Presente necessário para Coast FIRE
+            const pvNeeded = fiNumber / Math.pow((1+rate), yearsUntilRetirement);
+            const gapToday = pvNeeded - currentNW; // Aproximado simplificado sem contar sabático complexo no gap
+            
+            html += `<p>Faltam projetados <strong>${formatBRLCompact(shortfall)}</strong> lá na frente.</p>`;
+            html += `<p class="neutral-text" style="font-size:0.85rem; margin-top:5px">Para atingir o Coast FIRE hoje (mantendo essas premissas), seu patrimônio deveria ser aprox. <strong>${formatBRLCompact(pvNeeded)}</strong>.</p>`;
+        }
+        displays.result_box.innerHTML = html;
+
+        // Aviso do Sabático
+        if (sabYears > 0) {
+            displays.sabbatical_warning.style.display = "block";
+            displays.total_sab_cost.innerText = formatBRLCompact(totalSabCost);
+            
+            let lostGrowth = nwWithoutSabbatical - simulationNW;
+            displays.lost_compound.innerText = formatBRLCompact(lostGrowth);
+        } else {
+            displays.sabbatical_warning.style.display = "none";
+        }
+    }
+
+    // Inicialização e Event Listeners
+    Object.values(inputs).forEach(input => {
+        input.addEventListener('input', calculate);
+    });
+
+    // Rodar primeira vez
+    calculate();
+
+</script>
+
+</body>
+</html>
