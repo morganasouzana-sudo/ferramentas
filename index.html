@@ -70,7 +70,7 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Levemente mais largo para acomodar 3 colunas bem */
             gap: 2rem;
             justify-items: center;
         }
@@ -81,16 +81,17 @@
             box-shadow: var(--shadow);
             padding: 2.5rem 2rem;
             width: 100%;
-            max-width: 350px;
+            max-width: 380px;
             text-align: center;
             transition: var(--transition);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             border-top: 5px solid var(--accent-color);
-            cursor: pointer; /* Indica clicável */
+            cursor: pointer;
             position: relative;
             overflow: hidden;
+            height: 100%; /* Garante altura igual na linha */
         }
 
         .card:hover {
@@ -144,12 +145,13 @@
             background-color: var(--accent-color);
             color: white;
             padding: 0.9rem 1.8rem;
-            border-radius: 50px; /* Botão arredondado */
+            border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             transition: background-color 0.3s, transform 0.2s;
             align-self: center;
             z-index: 1;
+            margin-top: auto; /* Empurra o botão para o fundo do card */
         }
 
         .btn:hover {
@@ -157,19 +159,21 @@
             transform: scale(1.05);
         }
 
-        /* Estilos específicos para ícones */
-        .icon-finance { color: #27ae60; }
-        .icon-coast { color: #1abc9c; } /* Cor nova: Teal */
-        .icon-house { color: #e67e22; }
-        .icon-flip { color: #9b59b6; } /* Cor nova: Roxo */
-        .icon-debt { color: #c0392b; }
+        /* Cores dos Ícones */
+        .icon-turnaround { color: #f39c12; } /* Laranja/Dourado */
+        .icon-debt { color: #c0392b; } /* Vermelho */
+        .icon-finance { color: #27ae60; } /* Verde Escuro */
+        .icon-coast { color: #1abc9c; } /* Verde Água */
+        .icon-house { color: #e67e22; } /* Laranja Escuro */
+        .icon-flip { color: #8e44ad; } /* Roxo */
         
-        /* Ajuste para manter a cor ao hover */
+        /* Cores ao passar o mouse */
+        .card:hover .icon-turnaround { color: #f1c40f; }
+        .card:hover .icon-debt { color: #e74c3c; }
         .card:hover .icon-finance { color: #2ecc71; }
         .card:hover .icon-coast { color: #16a085; }
         .card:hover .icon-house { color: #d35400; }
-        .card:hover .icon-flip { color: #8e44ad; }
-        .card:hover .icon-debt { color: #e74c3c; }
+        .card:hover .icon-flip { color: #9b59b6; }
 
         footer {
             text-align: center;
@@ -178,16 +182,6 @@
             color: rgba(255, 255, 255, 0.6);
             font-size: 0.9rem;
             margin-top: auto;
-        }
-        
-        footer a {
-            color: white;
-            text-decoration: none;
-            opacity: 0.8;
-        }
-        
-        footer a:hover {
-            opacity: 1;
         }
 
         @media (max-width: 768px) {
@@ -202,60 +196,70 @@
 
     <header>
         <h1>Minhas Ferramentas</h1>
-        <p>Calculadoras e planejadores para gestão financeira inteligente</p>
+        <p>Calculadoras e planejadores para sua jornada financeira</p>
     </header>
 
     <main>
         <div class="grid-container">
             
-            <!-- Card 1: Independência Financeira -->
-            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/independencia-financeira/index.html'">
-                <div class="card-icon icon-finance">
-                    <i class="fa-solid fa-chart-line"></i>
+            <!-- 1. Virada Financeira (Start) -->
+            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/ferramentas/virada_financeira.html'">
+                <div class="card-icon icon-turnaround">
+                    <i class="fa-solid fa-arrow-trend-up"></i>
                 </div>
-                <h2>Independência Financeira</h2>
-                <p>Planeie o seu futuro, simule cenários de reforma e acompanhe a evolução do seu património.</p>
-                <a href="https://morganasouzana-sudo.github.io/independencia-financeira/index.html" class="btn">Acessar Calculadora</a>
+                <h2>Virada Financeira</h2>
+                <p>O ponto de partida. Reestruture suas finanças, defina metas claras e inicie sua mudança de vida.</p>
+                <a href="https://morganasouzana-sudo.github.io/ferramentas/virada_financeira.html" class="btn">Acessar Ferramenta</a>
             </div>
 
-            <!-- Card 2: Simulador Coast FIRE (NOVO) -->
-            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/ferramentas/simulador_coast_fire.html'">
-                <div class="card-icon icon-coast">
-                    <i class="fa-solid fa-umbrella-beach"></i>
-                </div>
-                <h2>Simulador Coast FIRE</h2>
-                <p>Descubra quanto precisa investir hoje para garantir a sua reforma sem a necessidade de aportes futuros.</p>
-                <a href="https://morganasouzana-sudo.github.io/ferramentas/simulador_coast_fire.html" class="btn">Acessar Simulador</a>
-            </div>
-
-            <!-- Card 3: Leilão de Imóveis -->
-            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/leilao_imoveis/index.html'">
-                <div class="card-icon icon-house">
-                    <i class="fa-solid fa-gavel"></i>
-                </div>
-                <h2>Leilão de Imóveis</h2>
-                <p>Ferramenta para análise de viabilidade e custos na arrematação de imóveis em leilão.</p>
-                <a href="https://morganasouzana-sudo.github.io/leilao_imoveis/index.html" class="btn">Acessar Planejador</a>
-            </div>
-
-             <!-- Card 4: Flip Imobiliário (NOVO) -->
-             <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/ferramentas/calc_flip_imobiliario.html'">
-                <div class="card-icon icon-flip">
-                    <i class="fa-solid fa-paint-roller"></i>
-                </div>
-                <h2>Flip Imobiliário</h2>
-                <p>Calcule o lucro potencial de operações de compra, reforma e revenda (Fix and Flip) de imóveis.</p>
-                <a href="https://morganasouzana-sudo.github.io/ferramentas/calc_flip_imobiliario.html" class="btn">Acessar Calculadora</a>
-            </div>
-
-            <!-- Card 5: Gestão de Dívidas -->
+            <!-- 2. Gestão de Dívidas (Recovery) -->
             <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/dividas/index.html'">
                 <div class="card-icon icon-debt">
                     <i class="fa-solid fa-file-invoice-dollar"></i>
                 </div>
                 <h2>Gestão de Dívidas</h2>
-                <p>Organize os seus passivos, crie estratégias de amortização e retome o controlo do seu orçamento.</p>
+                <p>Organize os seus passivos, crie estratégias inteligentes de amortização e limpe o seu orçamento.</p>
                 <a href="https://morganasouzana-sudo.github.io/dividas/index.html" class="btn">Acessar Gerenciador</a>
+            </div>
+
+            <!-- 3. Independência Financeira (Growth) -->
+            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/independencia-financeira/index.html'">
+                <div class="card-icon icon-finance">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h2>Independência Financeira</h2>
+                <p>Planeie a liberdade. Simule cenários de reforma antecipada e acompanhe a evolução patrimonial.</p>
+                <a href="https://morganasouzana-sudo.github.io/independencia-financeira/index.html" class="btn">Acessar Calculadora</a>
+            </div>
+
+            <!-- 4. Simulador Coast FIRE (Optimization) -->
+            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/ferramentas/simulador_coast_fire.html'">
+                <div class="card-icon icon-coast">
+                    <i class="fa-solid fa-umbrella-beach"></i>
+                </div>
+                <h2>Simulador Coast FIRE</h2>
+                <p>Descubra o "número mágico" para garantir a sua reforma apenas com os juros compostos.</p>
+                <a href="https://morganasouzana-sudo.github.io/ferramentas/simulador_coast_fire.html" class="btn">Acessar Simulador</a>
+            </div>
+
+            <!-- 5. Leilão de Imóveis (Investment) -->
+            <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/leilao_imoveis/index.html'">
+                <div class="card-icon icon-house">
+                    <i class="fa-solid fa-gavel"></i>
+                </div>
+                <h2>Leilão de Imóveis</h2>
+                <p>Ferramenta avançada para análise de viabilidade, custos e lucro na arrematação de imóveis.</p>
+                <a href="https://morganasouzana-sudo.github.io/leilao_imoveis/index.html" class="btn">Acessar Planejador</a>
+            </div>
+
+             <!-- 6. Flip Imobiliário (Investment) -->
+             <div class="card" onclick="window.location.href='https://morganasouzana-sudo.github.io/ferramentas/calc_flip_imobiliario.html'">
+                <div class="card-icon icon-flip">
+                    <i class="fa-solid fa-paint-roller"></i>
+                </div>
+                <h2>Flip Imobiliário</h2>
+                <p>Calcule o ROI de operações de compra, reforma e revenda rápida (Fix and Flip).</p>
+                <a href="https://morganasouzana-sudo.github.io/ferramentas/calc_flip_imobiliario.html" class="btn">Acessar Calculadora</a>
             </div>
 
         </div>
