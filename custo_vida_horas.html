@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quanto Custa Sua Vida? - Light</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        background: '#f8fafc', // Slate 50
+                        surface: '#ffffff',     // White
+                        primary: '#6366f1',     // Indigo 500
+                        secondary: '#10b981',   // Emerald 500
+                        essential: '#0891b2',   // Cyan 600 (Darker for contrast)
+                        desire: '#c026d3',      // Fuchsia 600
+                        freedom: '#059669',     // Emerald 600
+                        gold: '#d97706',        // Amber 600
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #1e293b; /* Slate 800 */
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.08), transparent 40%),
+                radial-gradient(circle at 0% 50%, rgba(16, 185, 129, 0.05), transparent 30%);
+            min-height: 100vh;
+        }
+        
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(226, 232, 240, 0.8); /* Slate 200 */
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+        }
+
+        .glass-input {
+            background: #f1f5f9; /* Slate 100 */
+            border: 1px solid #cbd5e1; /* Slate 300 */
+            color: #0f172a; /* Slate 900 */
+            transition: all 0.3s ease;
+        }
+        .glass-input:focus {
+            background: #ffffff;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            outline: none;
+        }
+
+        .glass-input::placeholder {
+            color: #94a3b8;
+        }
+
+        /* Calendar Grid Animation */
+        .day-cell {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .day-cell:hover {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        .category-radio:checked + label {
+            background-color: #f1f5f9;
+            border-color: currentColor;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="antialiased flex flex-col items-center py-12 px-4 selection:bg-indigo-100 selection:text-indigo-900">
+
+    <!-- Header -->
+    <header class="text-center mb-10 max-w-2xl w-full animate-fade-in">
+        <div class="inline-block mb-3 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-xs font-bold text-indigo-600 tracking-wide uppercase shadow-sm">
+            Ferramenta de Consciência
+        </div>
+        <h1 class="text-4xl md:text-6xl font-bold text-slate-900 mb-4 tracking-tight leading-tight">
+            Quanto Custa <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Sua Vida?</span>
+        </h1>
+        <p class="text-slate-600 text-lg leading-relaxed max-w-lg mx-auto">
+            Converta preços em tempo de vida e descubra se o esforço realmente vale a pena.
+        </p>
+    </header>
+
+    <main class="w-full max-w-3xl space-y-8 pb-10">
+        
+        <!-- STEP 1: Configuração da Realidade -->
+        <section class="glass-panel rounded-3xl p-8 animate-slide-up relative overflow-hidden">
+            
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-900 mb-1">1. Configure sua Realidade</h2>
+                    <p class="text-sm text-slate-500">Dados para calcular seu Valor Hora Real.</p>
+                </div>
+                <button onclick="toggleDetails()" class="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 border border-indigo-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                    Fórmula
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Salário Líquido</label>
+                    <div class="relative">
+                        <span class="absolute left-3 top-3 text-slate-400 text-sm">R$</span>
+                        <input type="number" id="salary" class="glass-input w-full rounded-xl py-2.5 pl-9 pr-4 text-sm font-semibold" placeholder="3500">
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Horas/Dia</label>
+                    <input type="number" id="hoursPerDay" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold" placeholder="8">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Dias/Semana</label>
+                    <input type="number" id="daysPerWeek" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold" placeholder="5">
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1 flex justify-between">
+                        Deslocamento
+                        <span class="text-[10px] text-slate-400 font-normal">(minutos)</span>
+                    </label>
+                    <input type="number" id="commuteMinutes" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold border-indigo-200 focus:border-indigo-500" placeholder="90">
+                </div>
+            </div>
+
+            <!-- Explainer Modal -->
+            <div id="calcDetails" class="hidden mb-6 text-sm text-slate-600 bg-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-sm">
+                <p><strong>A Lógica:</strong> O cálculo desconta o tempo de deslocamento como "hora trabalhada não paga", reduzindo seu valor por hora real. Tempo preso no trânsito é tempo de vida vendido ao trabalho.</p>
+            </div>
+
+            <!-- Result Card -->
+            <div id="wageResult" class="hidden transition-all duration-700">
+                <div class="bg-gradient-to-br from-indigo-50 to-slate-100 rounded-2xl p-6 border border-indigo-100 relative overflow-hidden shadow-inner">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-200/30 blur-3xl rounded-full"></div>
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+                        <div class="text-center md:text-left">
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nominal</p>
+                            <p class="text-2xl font-bold text-slate-500" id="nominalWageDisplay">R$ 0,00</p>
+                        </div>
+                        <div class="hidden md:block h-12 w-px bg-slate-200"></div>
+                        <div class="text-center md:text-right">
+                            <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">Seu Valor Real</p>
+                            <div class="flex items-baseline justify-center md:justify-end gap-2">
+                                <p class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter" id="realWageDisplay">R$ 0,00</p>
+                                <span class="text-lg text-slate-500 font-medium">/h</span>
+                            </div>
+                            <p class="text-sm text-indigo-600 mt-2 font-medium" id="commuteImpactDisplay"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 2: O Conversor (Gamified) -->
+        <section class="glass-panel rounded-3xl p-8 transition-all duration-500 opacity-50 pointer-events-none" id="converterSection">
+
+            <!-- Life Energy Battery (Gamification) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Battery Widget -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
+                    <div class="flex justify-between items-end mb-2">
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider">Comprometimento</h3>
+                            <p class="text-xs text-slate-400">Energia vital vendida</p>
+                        </div>
+                        <span id="batteryPercent" class="text-2xl font-bold text-slate-900">0%</span>
+                    </div>
+                    <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden relative shadow-inner border border-slate-200">
+                        <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000 ease-out"></div>
+                    </div>
+                    <p id="batteryStatus" class="text-xs text-right mt-2 font-mono text-emerald-600 font-medium">Nível: Seguro</p>
+                </div>
+
+                <!-- SLAVERY CALENDAR WIDGET -->
+                <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider">Calendário de Liberdade</h3>
+                        <span id="freedomDayLabel" class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 border border-slate-200">Você é livre dia 01</span>
+                    </div>
+                    <!-- Calendar Grid -->
+                    <div class="grid grid-cols-7 gap-1.5" id="calendarGrid">
+                        <!-- Days generated via JS -->
+                    </div>
+                    <div class="flex justify-between items-center mt-3 text-[10px] text-slate-500">
+                        <div class="flex gap-2">
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-cyan-500"></div> Necessidade</span>
+                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-fuchsia-500"></div> Desejo</span>
+                        </div>
+                        <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-emerald-100 border border-emerald-300"></div> Liberdade</span>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-slate-900 mb-6">2. A Loja da Vida</h2>
+
+            <!-- Input Area -->
+            <div class="flex flex-col gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300" id="inputContainer">
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-grow">
+                        <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">O que você quer?</label>
+                        <input type="text" id="itemName" class="glass-input w-full h-12 rounded-lg px-4 text-base" placeholder="Ex: iPhone 15, Jantar Japonês">
+                    </div>
+                    <div class="w-full md:w-36 relative">
+                        <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Preço</label>
+                        <span class="absolute left-3 top-[36px] text-slate-400 text-sm">R$</span>
+                        <input type="number" id="itemPrice" class="glass-input w-full h-12 rounded-lg pl-8 pr-4 text-base" placeholder="0.00">
+                    </div>
+                </div>
+
+                <!-- Category Selection -->
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <div class="flex-1">
+                            <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio" checked>
+                            <label for="cat-desire" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-sm text-fuchsia-600 hover:bg-fuchsia-50 transition-all w-full md:w-auto font-medium">
+                                <span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Desejo
+                            </label>
+                        </div>
+                        <div class="flex-1">
+                            <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio">
+                            <label for="cat-need" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-sm text-cyan-700 hover:bg-cyan-50 transition-all w-full md:w-auto font-medium">
+                                <span class="w-2 h-2 rounded-full bg-cyan-600"></span> Necessidade
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button onclick="addItem()" id="mainActionBtn" class="w-full md:w-auto h-12 bg-slate-900 text-white hover:bg-slate-800 font-bold px-8 rounded-lg transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" id="mainBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                        <span id="mainBtnText">Calcular Custo</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Shopping List -->
+            <div class="space-y-4" id="itemsList"></div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="text-center py-10 opacity-60">
+                <p class="text-slate-400 text-sm">Sua lista está vazia. Adicione um desejo para ver o peso dele.</p>
+            </div>
+
+            <!-- Grand Total & Actions -->
+            <div id="grandTotalContainer" class="hidden mt-10 pt-8 border-t border-slate-200 text-center">
+                <p class="text-slate-500 mb-2 text-sm font-bold uppercase tracking-widest">Custo Total de Vida</p>
+                <div class="text-5xl md:text-6xl font-bold text-slate-900 mb-3 tracking-tight" id="totalLifeTime">0h 00m</div>
+                <div class="inline-block px-4 py-2 rounded-lg bg-indigo-50 border border-indigo-100 mb-6">
+                    <p class="text-indigo-700 text-sm font-medium" id="totalDays">Equivale a 0 dias de trabalho.</p>
+                </div>
+
+                <!-- Share Button -->
+                <div class="flex justify-center">
+                    <button onclick="shareResults()" class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 rounded-xl transition-all font-medium text-sm border border-slate-200 shadow-sm hover:shadow-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                        Compartilhar Consciência
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-auto pb-8 text-center px-4 w-full border-t border-slate-200 pt-8 bg-slate-50">
+        <p class="text-slate-500 text-sm font-medium mb-2">
+            Inspirado no livro <span class="text-slate-700 italic font-semibold">"Your Money or Your Life"</span> de Vicki Robin e Joe Dominguez.
+        </p>
+        <p class="text-slate-400 text-xs">
+            Uma ferramenta de consciência financeira. Dados salvos apenas no seu dispositivo.
+        </p>
+    </footer>
+
+    <!-- Audio Effects -->
+    <script>
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            
+            if (type === 'add') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'delete') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.2);
+            }
+        }
+    </script>
+
+    <!-- Main Logic -->
+    <script>
+        // State
+        let state = {
+            salary: 0,
+            hoursPerDay: 0,
+            daysPerWeek: 0,
+            commuteMinutes: 0,
+            realHourlyRate: 0,
+            monthlyWorkHours: 0,
+            items: []
+        };
+        
+        let editingId = null; // Track editing state
+
+        const comparisons = [
+            { text: "escovar os dentes", hours: 0.05 },
+            { text: "ouvir sua música favorita", hours: 0.08 },
+            { text: "fazer um cafézinho", hours: 0.15 },
+            { text: "um episódio de sitcom", hours: 0.4 },
+            { text: "uma aula de spinning", hours: 0.75 },
+            { text: "um almoço de domingo", hours: 1.5 },
+            { text: "assistir 'Vingadores: Ultimato'", hours: 3 },
+            { text: "uma manhã de sábado preguiçosa", hours: 4 },
+            { text: "uma boa noite de sono", hours: 8 },
+            { text: "maratonar uma temporada de série", hours: 10 },
+            { text: "um voo Brasil -> Europa", hours: 12 },
+            { text: "zerar um jogo longo (RPG)", hours: 40 },
+            { text: "um fim de semana na praia", hours: 48 },
+            { text: "uma semana inteira de férias", hours: 168 },
+            { text: "um mês sabático", hours: 720 },
+            { text: "aprender um novo idioma do zero", hours: 1000 },
+            { text: "uma gestação completa", hours: 6500 }
+        ];
+
+        // DOM Elements
+        const els = {
+            salary: document.getElementById('salary'),
+            hoursPerDay: document.getElementById('hoursPerDay'),
+            daysPerWeek: document.getElementById('daysPerWeek'),
+            commute: document.getElementById('commuteMinutes'),
+            wageResult: document.getElementById('wageResult'),
+            nominalDisplay: document.getElementById('nominalWageDisplay'),
+            realDisplay: document.getElementById('realWageDisplay'),
+            commuteImpact: document.getElementById('commuteImpactDisplay'),
+            converterSection: document.getElementById('converterSection'),
+            itemName: document.getElementById('itemName'),
+            itemPrice: document.getElementById('itemPrice'),
+            itemsList: document.getElementById('itemsList'),
+            emptyState: document.getElementById('emptyState'),
+            totalContainer: document.getElementById('grandTotalContainer'),
+            totalTime: document.getElementById('totalLifeTime'),
+            totalDays: document.getElementById('totalDays'),
+            batteryBar: document.getElementById('batteryBar'),
+            batteryPercent: document.getElementById('batteryPercent'),
+            batteryStatus: document.getElementById('batteryStatus'),
+            calendarGrid: document.getElementById('calendarGrid'),
+            freedomDayLabel: document.getElementById('freedomDayLabel')
+        };
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            addListeners();
+            calculateRealWage();
+            renderCalendar([], 0); // Initial empty calendar
+        });
+
+        function addListeners() {
+            [els.salary, els.hoursPerDay, els.daysPerWeek, els.commute].forEach(input => {
+                input.addEventListener('input', () => {
+                    calculateRealWage();
+                    saveState();
+                });
+            });
+
+            els.itemPrice.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') addItem();
+            });
+            els.itemName.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') els.itemPrice.focus();
+            });
+        }
+
+        function calculateRealWage() {
+            const salary = parseFloat(els.salary.value) || 0;
+            const hours = parseFloat(els.hoursPerDay.value) || 0;
+            const days = parseFloat(els.daysPerWeek.value) || 0;
+            const commute = parseFloat(els.commute.value) || 0;
+
+            if (salary > 0 && hours > 0 && days > 0) {
+                const weeksPerMonth = 4.33; 
+                
+                // Real Calculation
+                const dailyCommuteHours = commute / 60;
+                const totalDailyHours = hours + dailyCommuteHours;
+                const realMonthlyHours = totalDailyHours * days * weeksPerMonth;
+                const realRate = salary / realMonthlyHours;
+                const nominalRate = salary / (hours * days * weeksPerMonth);
+
+                state.salary = salary;
+                state.hoursPerDay = hours;
+                state.daysPerWeek = days;
+                state.commuteMinutes = commute;
+                state.realHourlyRate = realRate;
+                state.monthlyWorkHours = realMonthlyHours;
+
+                els.wageResult.classList.remove('hidden');
+                els.nominalDisplay.innerText = formatCurrency(nominalRate);
+                els.realDisplay.innerText = formatCurrency(realRate);
+                
+                const drop = ((nominalRate - realRate) / nominalRate) * 100;
+                els.commuteImpact.innerHTML = drop > 0 
+                    ? `<span class="text-red-500 font-bold">-${drop.toFixed(1)}%</span> devido ao deslocamento`
+                    : `<span class="text-emerald-600 font-bold">Eficiência máxima</span>`;
+
+                els.converterSection.classList.remove('opacity-50', 'pointer-events-none');
+                renderItems();
+
+            } else {
+                els.wageResult.classList.add('hidden');
+                els.converterSection.classList.add('opacity-50', 'pointer-events-none');
+            }
+        }
+
+        function calculateCompoundInterest(principal) {
+            // Assume 10% annual return for 10 years (avg stock market)
+            const rate = 0.10;
+            const years = 10;
+            const amount = principal * Math.pow((1 + rate), years);
+            return amount;
+        }
+
+        function addItem() {
+            const name = els.itemName.value.trim();
+            const price = parseFloat(els.itemPrice.value);
+            const category = document.querySelector('input[name="category"]:checked').value;
+
+            if (!name || isNaN(price) || price <= 0) return;
+
+            const hoursCost = price / state.realHourlyRate;
+            
+            // Context Logic
+            const sortedComparisons = [...comparisons].sort((a, b) => {
+                return Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost);
+            });
+            const closest = sortedComparisons[0];
+            const context = `Custa o mesmo tempo que <strong>${closest.text}</strong>.`;
+
+            if (editingId) {
+                // UPDATE ITEM
+                const index = state.items.findIndex(i => i.id === editingId);
+                if (index !== -1) {
+                    state.items[index] = { ...state.items[index], name, price, category, context };
+                }
+                
+                // Reset Edit Mode
+                editingId = null;
+                document.getElementById('mainBtnText').innerText = "Calcular Custo";
+                document.getElementById('mainBtnIcon').innerHTML = '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>';
+                const container = document.getElementById('inputContainer');
+                container.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+                
+            } else {
+                // ADD ITEM
+                state.items.push({
+                    id: Date.now(),
+                    name,
+                    price,
+                    category,
+                    context
+                });
+            }
+
+            playSound('add');
+            els.itemName.value = '';
+            els.itemPrice.value = '';
+            els.itemName.focus();
+            
+            saveState();
+            renderItems();
+        }
+
+        function startEdit(id) {
+            const item = state.items.find(i => i.id === id);
+            if (!item) return;
+
+            editingId = id;
+            
+            // Populate Fields
+            els.itemName.value = item.name;
+            els.itemPrice.value = item.price;
+            if (item.category === 'desire') document.getElementById('cat-desire').checked = true;
+            else document.getElementById('cat-need').checked = true;
+
+            // Change UI to Edit Mode
+            document.getElementById('mainBtnText').innerText = "Salvar Alterações";
+            document.getElementById('mainBtnIcon').innerHTML = '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'; // Edit Icon
+            
+            // Highlight container
+            const container = document.getElementById('inputContainer');
+            container.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+
+            // Scroll to inputs
+            els.itemName.focus();
+            window.scrollTo({ top: container.offsetTop - 20, behavior: 'smooth' });
+        }
+
+        function deleteItem(id) {
+            playSound('delete');
+            state.items = state.items.filter(item => item.id !== id);
+            
+            // If deleting the item currently being edited, reset edit mode
+            if (editingId === id) {
+                 editingId = null;
+                 document.getElementById('mainBtnText').innerText = "Calcular Custo";
+                 document.getElementById('mainBtnIcon').innerHTML = '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>';
+                 els.itemName.value = '';
+                 els.itemPrice.value = '';
+                 document.getElementById('inputContainer').classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50');
+            }
+
+            saveState();
+            renderItems();
+        }
+
+        function renderItems() {
+            els.itemsList.innerHTML = '';
+            let totalHoursCost = 0;
+            let totalCostMoney = 0;
+
+            if (state.items.length === 0) {
+                els.emptyState.classList.remove('hidden');
+                els.totalContainer.classList.add('hidden');
+                updateBattery(0);
+                renderCalendar([], 0);
+                return;
+            }
+
+            els.emptyState.classList.add('hidden');
+            els.totalContainer.classList.remove('hidden');
+
+            const sortedItems = [...state.items].sort((a, b) => {
+                if (a.category === b.category) return b.price - a.price;
+                return a.category === 'need' ? -1 : 1;
+            });
+
+            sortedItems.forEach(item => {
+                totalCostMoney += item.price;
+                const hoursCost = item.price / state.realHourlyRate;
+                totalHoursCost += hoursCost;
+                
+                const percentOfLife = Math.min((hoursCost / state.monthlyWorkHours) * 100, 100);
+                const isNeed = item.category === 'need';
+                
+                const borderColor = isNeed ? 'border-cyan-200' : 'border-fuchsia-200';
+                const textColor = isNeed ? 'text-cyan-700' : 'text-fuchsia-700';
+                const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
+                const badgeText = isNeed ? 'Necessidade' : 'Desejo';
+                const badgeBg = isNeed ? 'bg-cyan-50' : 'bg-fuchsia-50';
+
+                // --- Investment Projection Logic ---
+                let investmentHTML = '';
+                if (item.price > 200) {
+                    const futureVal = calculateCompoundInterest(item.price);
+                    investmentHTML = `
+                        <div class="mt-3 pt-3 border-t border-slate-100 flex items-start gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <span class="text-gold text-lg">📈</span>
+                            <div>
+                                <p class="text-[10px] text-slate-400 uppercase tracking-wide font-bold">Máquina do Tempo</p>
+                                <p class="text-xs text-slate-600">Se investido (10% a.a), isso valeria <span class="text-gold font-bold">${formatCurrency(futureVal)}</span> em 10 anos.</p>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                const card = document.createElement('div');
+                card.className = `group bg-white border ${borderColor} p-5 rounded-2xl transition-all duration-300 animate-slide-up hover:shadow-md relative overflow-hidden`;
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3 relative z-10">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${badgeBg} ${textColor}">${badgeText}</span>
+                            </div>
+                            <h3 class="font-bold text-slate-800 text-lg tracking-tight">${item.name}</h3>
+                            <p class="text-slate-500 text-xs font-mono mt-0.5">${formatCurrency(item.price)}</p>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xl font-bold text-slate-900 tracking-tight">${formatTime(hoursCost)}</span>
+                            <span class="text-[10px] text-slate-500 block">de vida</span>
+                        </div>
+                    </div>
+                    
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden relative mb-2">
+                        <div class="${barColor} h-full rounded-full" style="width: ${percentOfLife}%"></div>
+                    </div>
+                    
+                    <div class="flex justify-between items-end mt-3 bg-slate-50 p-2 rounded-lg">
+                        <p class="text-xs text-slate-500 flex items-center gap-2">
+                            <span class="text-yellow-500 text-sm">💡</span> 
+                            <span>${item.context}</span>
+                        </p>
+                        <div class="flex gap-2">
+                            <button onclick="startEdit(${item.id})" class="text-[10px] text-indigo-600 hover:text-indigo-800 uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-all">
+                                Editar
+                            </button>
+                            <button onclick="deleteItem(${item.id})" class="text-[10px] text-red-500/60 hover:text-red-500 uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-all">
+                                Remover
+                            </button>
+                        </div>
+                    </div>
+
+                    ${investmentHTML}
+                `;
+                els.itemsList.appendChild(card);
+            });
+
+            els.totalTime.innerText = formatTime(totalHoursCost);
+            const workDayLength = state.hoursPerDay + (state.commuteMinutes / 60);
+            const totalDays = totalHoursCost / workDayLength;
+            els.totalDays.innerHTML = `Equivale a <strong class="text-slate-900">${totalDays.toFixed(1)} dias</strong> inteiros de rotina.`;
+
+            const totalMonthlyIncome = state.salary; 
+            const percentageConsumed = (totalCostMoney / totalMonthlyIncome) * 100;
+            updateBattery(percentageConsumed);
+            renderCalendar(sortedItems, totalMonthlyIncome);
+        }
+
+        function updateBattery(percent) {
+            const p = Math.min(percent, 100);
+            els.batteryBar.style.width = `${p}%`;
+            els.batteryPercent.innerText = `${p.toFixed(1)}%`;
+            
+            const bar = els.batteryBar;
+            const status = els.batteryStatus;
+            
+            bar.className = 'h-full transition-all duration-1000 ease-out ';
+            
+            if (p < 30) {
+                bar.classList.add('bg-gradient-to-r', 'from-emerald-400', 'to-emerald-500');
+                status.innerText = "Nível: Sustentável";
+                status.className = "text-xs text-right mt-2 font-mono text-emerald-600 font-medium";
+            } else if (p < 60) {
+                bar.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-orange-500');
+                status.innerText = "Nível: Atenção";
+                status.className = "text-xs text-right mt-2 font-mono text-yellow-600 font-medium";
+            } else {
+                bar.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600', 'animate-pulse');
+                status.innerText = "Nível: Crítico";
+                status.className = "text-xs text-right mt-2 font-mono text-red-600 font-bold";
+            }
+        }
+
+        function renderCalendar(items, totalSalary) {
+            els.calendarGrid.innerHTML = '';
+            const totalDays = 30;
+            const dayValue = totalSalary / totalDays;
+            
+            let needCost = items.filter(i => i.category === 'need').reduce((sum, i) => sum + i.price, 0);
+            let desireCost = items.filter(i => i.category === 'desire').reduce((sum, i) => sum + i.price, 0);
+            
+            const daysNeeds = Math.ceil(needCost / dayValue);
+            const daysDesires = Math.ceil(desireCost / dayValue);
+            
+            const totalConsumedDays = Math.min(daysNeeds + daysDesires, 30);
+            const freedomDay = totalConsumedDays < 30 ? totalConsumedDays + 1 : "Nunca";
+
+            if (totalConsumedDays === 0) {
+                els.freedomDayLabel.innerHTML = "Você é livre dia <strong class='text-emerald-600'>01</strong>";
+            } else if (totalConsumedDays >= 30) {
+                els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
+            } else {
+                els.freedomDayLabel.innerHTML = `Você é livre dia <strong class='text-emerald-600'>${String(freedomDay).padStart(2, '0')}</strong>`;
+            }
+
+            for (let i = 1; i <= totalDays; i++) {
+                const dayDiv = document.createElement('div');
+                dayDiv.className = 'day-cell h-6 w-full rounded-sm text-[8px] flex items-center justify-center font-bold relative group cursor-default';
+                
+                if (i <= daysNeeds) {
+                    dayDiv.classList.add('bg-cyan-500', 'text-white');
+                    dayDiv.title = `Dia ${i}: Trabalhando para pagar Necessidades`;
+                } else if (i <= daysNeeds + daysDesires) {
+                    dayDiv.classList.add('bg-fuchsia-500', 'text-white');
+                    dayDiv.title = `Dia ${i}: Trabalhando para pagar Desejos`;
+                } else {
+                    dayDiv.classList.add('bg-emerald-50', 'text-emerald-400', 'border', 'border-emerald-100');
+                    dayDiv.title = `Dia ${i}: Dinheiro Livre`;
+                }
+                
+                dayDiv.innerText = i;
+                els.calendarGrid.appendChild(dayDiv);
+            }
+        }
+
+        // --- Share Functionality ---
+        function shareResults() {
+            if (state.items.length === 0) {
+                alert("Adicione itens para compartilhar seu resultado!");
+                return;
+            }
+
+            const totalTime = document.getElementById('totalLifeTime').innerText;
+            const text = `💰 Descobri que meu Salário Real é ${formatCurrency(state.realHourlyRate)}/hora.\n\nMinha lista de desejos custa:\n⏳ ${totalTime} de vida.\n\nCalcule o seu valor real em "Quanto Custa Sua Vida?".`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('button[onclick="shareResults()"]');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = `<span class="text-emerald-600 flex items-center gap-2">Copiado! <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                }, 2000);
+            });
+        }
+
+        // --- Helpers & Persistence ---
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
+        }
+
+        function formatTime(decimalHours) {
+            const hrs = Math.floor(decimalHours);
+            const mins = Math.round((decimalHours - hrs) * 60);
+            if (hrs > 0) return `${hrs}h ${mins}m`;
+            return `${mins}m`;
+        }
+
+        function toggleDetails() {
+            document.getElementById('calcDetails').classList.toggle('hidden');
+        }
+
+        function saveState() {
+            localStorage.setItem('lifeCostState_v5', JSON.stringify({
+                salary: els.salary.value,
+                hoursPerDay: els.hoursPerDay.value,
+                daysPerWeek: els.daysPerWeek.value,
+                commuteMinutes: els.commute.value,
+                items: state.items
+            }));
+        }
+
+        function loadState() {
+            let saved = localStorage.getItem('lifeCostState_v5') || localStorage.getItem('lifeCostState_v4');
+            if (saved) {
+                const data = JSON.parse(saved);
+                if(data.salary) els.salary.value = data.salary;
+                if(data.hoursPerDay) els.hoursPerDay.value = data.hoursPerDay;
+                if(data.daysPerWeek) els.daysPerWeek.value = data.daysPerWeek;
+                if(data.commuteMinutes) els.commute.value = data.commuteMinutes;
+                if(data.items) state.items = data.items;
+            }
+        }
+    </script>
+</body>
+</html>
