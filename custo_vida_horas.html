@@ -292,17 +292,21 @@
                         </div>
                         
                         <div class="flex justify-center">
-                            <button onclick="shareResults()" class="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors font-bold uppercase tracking-wide bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-slate-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                                Copiar Relatório
+                            <button onclick="downloadShareImage()" class="group relative px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl font-bold shadow-lg hover:shadow-indigo-500/30 transition-all hover:scale-105 active:scale-95 flex items-center gap-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                <span>Baixar Card para Postar</span>
                             </button>
                         </div>
+                        <p class="text-[10px] text-slate-400 mt-2">Gera uma imagem pronta para Stories/WhatsApp</p>
                     </div>
                 </div>
             </div>
         </section>
 
     </main>
+
+    <!-- Hidden Canvas for Image Generation -->
+    <canvas id="shareCanvas" width="1080" height="1350" style="display:none;"></canvas>
 
     <footer class="mt-auto pb-8 text-center px-4 w-full border-t border-slate-200 pt-8 bg-slate-50">
         <p class="text-slate-500 text-sm font-medium mb-2">
@@ -679,6 +683,103 @@
             }
         }
 
+        // --- NEW: Share Image Generator ---
+        function downloadShareImage() {
+            const canvas = document.getElementById('shareCanvas');
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+
+            // Background - Deep Gradient
+            const grad = ctx.createLinearGradient(0, 0, 0, height);
+            grad.addColorStop(0, '#1e1b4b'); // Indigo 950
+            grad.addColorStop(1, '#312e81'); // Indigo 900
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, width, height);
+
+            // Add slight noise/texture overlay (simulated with dots)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.03)';
+            for (let i = 0; i < 200; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random() * width, Math.random() * height, Math.random() * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // --- TEXT ---
+            ctx.textAlign = 'center';
+            
+            // Header
+            ctx.fillStyle = '#a5b4fc'; // Indigo 300
+            ctx.font = 'bold 30px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('FERRAMENTA DE CONSCIÊNCIA', width / 2, 120);
+
+            // Title
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 80px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('QUANTO CUSTA', width / 2, 220);
+            
+            ctx.fillStyle = '#c084fc'; // Purple 400
+            ctx.fillText('MINHA VIDA?', width / 2, 310);
+
+            // Separator Line
+            ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(150, 380);
+            ctx.lineTo(width - 150, 380);
+            ctx.stroke();
+
+            // Main Stat Box (Real Hourly Wage)
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+            ctx.roundRect(100, 450, width - 200, 250, 30);
+            ctx.fill();
+            
+            ctx.fillStyle = '#94a3b8'; // Slate 400
+            ctx.font = '40px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Meu Valor Real por Hora', width / 2, 530);
+
+            ctx.fillStyle = '#34d399'; // Emerald 400
+            ctx.font = 'bold 100px "Plus Jakarta Sans", sans-serif';
+            const realWage = els.realRate.innerText;
+            ctx.fillText(realWage, width / 2, 640);
+
+            // Secondary Stats
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '50px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Minha lista de desejos custa:', width / 2, 850);
+
+            ctx.fillStyle = '#f472b6'; // Pink 400
+            ctx.font = 'bold 90px "Plus Jakarta Sans", sans-serif';
+            const totalTime = els.totalTime.innerText;
+            ctx.fillText(totalTime + ' de vida', width / 2, 960);
+
+            // Days
+            const totalDays = els.totalDays.innerText;
+            ctx.fillStyle = '#e2e8f0';
+            ctx.font = '40px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText(`(${totalDays})`, width / 2, 1040);
+
+            // Footer / CTA
+            ctx.fillStyle = '#6366f1'; // Indigo 500
+            ctx.fillRect(0, height - 150, width, 150);
+            
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 35px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Calcule o valor do seu tempo agora.', width / 2, height - 85);
+            
+            // Helper for rounded rect in older browsers if needed (simplified polyfill logic)
+            if (!ctx.roundRect) {
+                // Simplified fallback if roundRect isn't supported
+                ctx.rect(100, 450, width - 200, 250); 
+            }
+
+            // Download
+            const link = document.createElement('a');
+            link.download = 'meu-custo-de-vida.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
         function formatCurrency(v) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(v); }
         
         function formatTime(decimal) {
@@ -686,12 +787,6 @@
             const m = Math.round((decimal - h) * 60);
             if(h===0) return `${m}m`;
             return `${h}h${m}m`;
-        }
-
-        function shareResults() {
-             const txt = `Meu Valor Hora Real é ${els.realRate.innerText}. Minha lista custa ${els.totalTime.innerText} de vida.`;
-             navigator.clipboard.writeText(txt);
-             alert("Relatório copiado!");
         }
 
         function saveState() {
