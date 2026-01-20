@@ -18,10 +18,18 @@
                         surface: '#ffffff',
                         primary: '#6366f1',
                         secondary: '#10b981',
-                        essential: '#0891b2', // Cyan
-                        desire: '#c026d3',    // Fuchsia
-                        freedom: '#059669',   // Emerald
-                        gold: '#d97706',      // Amber
+                        essential: '#0891b2',
+                        desire: '#c026d3',
+                        freedom: '#059669',
+                        gold: '#d97706',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'slide-up': 'slideUp 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        slideUp: { '0%': { opacity: '0', transform: 'translateY(20px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } }
                     }
                 }
             }
@@ -35,10 +43,10 @@
             min-height: 100vh;
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
         }
         .glass-input {
             background: #f1f5f9; border: 1px solid #cbd5e1; color: #0f172a; transition: all 0.3s;
@@ -46,34 +54,31 @@
         .glass-input:focus {
             background: #ffffff; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1); outline: none;
         }
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         input[type=range] { -webkit-appearance: none; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #6366f1; cursor: pointer; margin-top: -6px; box-shadow: 0 0 5px rgba(99, 102, 241, 0.4); }
         input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
-        .day-cell { transition: all 0.3s; }
-        .day-cell:hover { transform: scale(1.15); z-index: 10; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .category-radio:checked + label { background-color: #f1f5f9; border-color: currentColor; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
     </style>
 </head>
-<body class="antialiased flex flex-col items-center py-12 px-4">
+<body class="antialiased flex flex-col items-center py-12 px-4 text-slate-800">
 
-    <header class="text-center mb-8 max-w-2xl w-full">
+    <header class="text-center mb-8 max-w-2xl w-full animate-fade-in">
         <div class="inline-block mb-3 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-100 text-xs font-bold text-indigo-600 uppercase tracking-wide">
             Ferramenta de Consciência
         </div>
         <h1 class="text-4xl md:text-5xl font-bold text-slate-900 mb-2 tracking-tight">
             Quanto Custa <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600">Sua Vida?</span>
         </h1>
-        <p class="text-slate-500 text-sm">Converta gastos em tempo de vida e dias de trabalho.</p>
+        <p class="text-slate-500 text-sm">Descubra o preço real das coisas em dias de liberdade.</p>
     </header>
 
     <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-6 pb-10">
         
         <!-- COLUNA 1: Configuração -->
-        <section class="lg:col-span-4 glass-panel rounded-3xl p-6 h-fit sticky top-6">
+        <section class="lg:col-span-4 glass-panel rounded-3xl p-6 h-fit sticky top-6 animate-slide-up">
             <h2 class="text-lg font-bold text-slate-900 mb-5 flex items-center gap-2">
                 <span class="w-1.5 h-5 bg-green-500 rounded-full"></span> 1. Sua Realidade
             </h2>
@@ -103,10 +108,6 @@
             </div>
 
             <div id="resultCard" class="mt-6 pt-5 border-t border-slate-200 hidden">
-                <div class="flex justify-between items-end mb-1">
-                    <span class="text-[10px] text-slate-400 uppercase tracking-wider">Nominal</span>
-                    <span id="nominalWageDisplay" class="text-slate-400 text-xs line-through decoration-red-400/50">R$ 0,00</span>
-                </div>
                 <div class="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-xl border border-indigo-100 shadow-sm">
                     <p class="text-[10px] text-indigo-600 uppercase tracking-widest mb-0.5 font-bold">Valor Real / Hora</p>
                     <div class="flex items-baseline gap-1">
@@ -126,7 +127,7 @@
                 </h2>
 
                 <!-- Inputs -->
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 relative z-20" id="inputContainer">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm mb-6 relative z-20 transition-all duration-300" id="inputContainer">
                     <div class="flex flex-col sm:flex-row gap-3 mb-3">
                         <div class="flex-grow">
                             <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Item</label>
@@ -143,25 +144,25 @@
                                 <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio" checked>
                                 <label for="cat-need" class="flex flex-col items-center justify-center py-2 px-4 rounded-lg border border-transparent hover:bg-cyan-50 cursor-pointer transition-all h-full w-full sm:w-auto">
                                     <span class="text-[10px] font-bold text-cyan-700 uppercase">Fixo</span>
-                                    <span class="text-[9px] text-cyan-500">Necessidade</span>
+                                    <span class="text-[9px] text-cyan-600">Necessidade</span>
                                 </label>
                             </div>
                             <div class="flex-1">
                                 <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio">
                                 <label for="cat-desire" class="flex flex-col items-center justify-center py-2 px-4 rounded-lg border border-transparent hover:bg-fuchsia-50 cursor-pointer transition-all h-full w-full sm:w-auto">
                                     <span class="text-[10px] font-bold text-fuchsia-700 uppercase">Variável</span>
-                                    <span class="text-[9px] text-fuchsia-500">Desejo</span>
+                                    <span class="text-[9px] text-fuchsia-600">Desejo</span>
                                 </label>
                             </div>
                         </div>
-                        <button onclick="addItem()" id="mainActionBtn" class="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 font-bold px-6 py-2.5 rounded-lg shadow-md active:scale-95 text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2">
+                        <button onclick="addItem()" id="mainActionBtn" class="w-full sm:w-auto bg-slate-900 text-white hover:bg-slate-800 font-bold px-6 py-2.5 rounded-lg shadow-md active:scale-95 text-xs uppercase tracking-wide transition-all flex items-center justify-center gap-2 h-12 sm:h-auto">
                             <span id="btnIcon">+</span> <span id="btnText">Adicionar</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Lista (Grid Compacto) -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-1 mb-6 content-start min-h-[100px]" id="itemsList"></div>
+                <!-- Lista (Grid Compacto 2 Colunas) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[400px] overflow-y-auto pr-1 mb-6 content-start min-h-[50px]" id="itemsList"></div>
 
                 <!-- Empty State -->
                 <div id="emptyState" class="text-center py-8 opacity-60 mb-4 hidden">
@@ -177,7 +178,7 @@
                             <!-- Bateria -->
                             <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                                 <div class="flex justify-between items-end mb-2">
-                                    <span class="text-[10px] font-bold text-slate-500 uppercase">Energia Vendida</span>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase">Comprometimento Mensal</span>
                                     <span id="batteryPercent" class="text-lg font-bold text-slate-900">0%</span>
                                 </div>
                                 <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative mb-1">
@@ -209,7 +210,7 @@
                             </div>
                             <div class="grid grid-cols-7 gap-1.5" id="calendarGrid"></div>
                             <div class="flex gap-2 mt-2 text-[8px] text-slate-400 uppercase font-bold justify-center">
-                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Fix</span>
+                                <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Fixo</span>
                                 <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Var</span>
                                 <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-emerald-100 border border-emerald-300"></span> Liv</span>
                             </div>
@@ -239,7 +240,7 @@
     <script>
         const els = {
             salary: document.getElementById('salary'), hours: document.getElementById('hoursPerDay'), days: document.getElementById('daysPerWeek'), commuteRange: document.getElementById('commuteRange'), commuteLabel: document.getElementById('commuteLabel'),
-            resultCard: document.getElementById('resultCard'), shopSection: document.getElementById('shopSection'), nominalRate: document.getElementById('nominalWageDisplay'), realRate: document.getElementById('realWageDisplay'), commuteImpact: document.getElementById('commuteImpactDisplay'),
+            resultCard: document.getElementById('resultCard'), shopSection: document.getElementById('shopSection'), realRate: document.getElementById('realWageDisplay'), commuteImpact: document.getElementById('commuteImpactDisplay'),
             itemName: document.getElementById('itemName'), itemPrice: document.getElementById('itemPrice'), itemsList: document.getElementById('itemsList'), emptyState: document.getElementById('emptyState'),
             totalContainer: document.getElementById('grandTotalContainer'), totalTime: document.getElementById('totalLifeTime'), totalDays: document.getElementById('totalDays'),
             batteryBar: document.getElementById('batteryBar'), batteryPercent: document.getElementById('batteryPercent'), batteryStatus: document.getElementById('batteryStatus'),
@@ -252,7 +253,7 @@
         
         const comparisons = [
             { text: "escovar os dentes", hours: 0.05 }, { text: "um café", hours: 0.15 }, { text: "um episódio de série", hours: 0.5 }, { text: "um almoço", hours: 1.5 },
-            { text: "um filme", hours: 3 }, { text: "uma noite de sono", hours: 8 }, { text: "uma maratona de série", hours: 10 }, { text: "um voo transatlântico", hours: 12 },
+            { text: "um filme", hours: 3 }, { text: "uma noite de sono", hours: 8 }, { text: "uma maratona de série", hours: 10 }, { text: "um voo longo", hours: 12 },
             { text: "zerar um RPG", hours: 40 }, { text: "um fim de semana", hours: 48 }, { text: "uma semana de férias", hours: 168 }, { text: "um mês sabático", hours: 720 }
         ];
 
@@ -278,7 +279,6 @@
                 state.monthlyWorkHours = monthlyDays * dailyTotalHours;
                 state.realHourlyRate = state.salary / state.monthlyWorkHours;
 
-                els.nominalRate.innerText = formatCurrency(nominalRate) + "/h";
                 els.realRate.innerText = formatCurrency(state.realHourlyRate);
                 
                 const drop = ((nominalRate - state.realHourlyRate) / nominalRate) * 100;
@@ -291,6 +291,11 @@
                 els.resultCard.classList.add('hidden');
                 els.shopSection.classList.add('opacity-50', 'pointer-events-none');
             }
+        }
+
+        function getComparisonContext(hoursCost) {
+            const sortedComparisons = [...comparisons].sort((a, b) => Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost));
+            return `~ ${sortedComparisons[0].text}`;
         }
 
         function addItem() {
@@ -341,6 +346,10 @@
             saveState(); renderCart();
         }
 
+        function calculateCompoundInterest(principal) {
+            return principal * Math.pow(1.10, 10);
+        }
+
         function renderCart() {
             els.itemsList.innerHTML = '';
             if(state.items.length === 0) {
@@ -362,17 +371,13 @@
                 const isNeed = item.category === 'need';
                 const borderColor = isNeed ? 'border-cyan-100' : 'border-fuchsia-100';
                 const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
+                const badgeText = isNeed ? 'FIXO' : 'VARIÁVEL';
                 const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
-                const badgeText = isNeed ? 'Fixo' : 'Variável';
-                
-                // Dynamic Context
-                const sortedComp = [...comparisons].sort((a, b) => Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost));
-                const contextText = `~ ${sortedComp[0].text}`;
+                const contextText = getComparisonContext(hoursCost);
 
-                // Investment
                 let investHtml = '';
                 if(item.price > 200) {
-                    const future = item.price * Math.pow(1.10, 10);
+                    const future = calculateCompoundInterest(item.price);
                     investHtml = `<div class="mt-2 text-[10px] text-amber-700 bg-amber-50 p-1.5 rounded flex gap-1 items-center border border-amber-100">
                         <span>📈</span> <span>Em 10 anos: <strong>${formatCurrency(future)}</strong></span>
                     </div>`;
@@ -399,8 +404,9 @@
                         ${investHtml}
                     </div>
                     <div class="flex justify-between items-center mt-3 pt-2 border-t border-slate-50">
-                         <button onclick="editItem(${item.id})" class="text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 px-2 py-1 rounded transition-colors">EDITAR</button>
-                         <button onclick="removeItem(${item.id})" class="text-[10px] font-bold text-red-400 hover:bg-red-50 px-2 py-1 rounded transition-colors">EXCLUIR</button>
+                         <button onclick="editItem(${item.id})" class="text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 px-2 py-1 rounded transition-colors w-full text-center">EDITAR</button>
+                         <div class="w-px h-3 bg-slate-200"></div>
+                         <button onclick="removeItem(${item.id})" class="text-[10px] font-bold text-red-400 hover:bg-red-50 px-2 py-1 rounded transition-colors w-full text-center">EXCLUIR</button>
                     </div>
                 `;
                 els.itemsList.appendChild(card);
@@ -411,11 +417,16 @@
 
         function updateStats(money, hours, fixed, variable) {
             els.totalTime.innerText = formatTime(hours);
-            // Fix: Calculate work days based on work hours only (8h), not work+commute
-            const workDays = hours / state.hoursPerDay; 
-            els.totalDays.innerText = `Aprox. ${workDays.toFixed(1)} dias de trabalho`;
+            
+            // Logic Fix: Days of work needed = % of salary * work days in month
+            // If item costs 50% of salary, it takes 50% of work days (~11 days).
+            const ratio = money / state.salary;
+            const avgWorkDays = state.daysPerWeek * 4.33; 
+            const workDaysNeeded = ratio * avgWorkDays;
+            
+            els.totalDays.innerText = `Aprox. ${workDaysNeeded.toFixed(1)} dias de trabalho`;
 
-            const percentConsumed = (money / state.salary) * 100;
+            const percentConsumed = ratio * 100;
             const p = Math.min(percentConsumed, 100);
             els.batteryBar.style.width = `${p}%`;
             els.batteryPercent.innerText = `${p.toFixed(1)}%`;
@@ -429,46 +440,43 @@
             els.barFixed.style.width = `${fP}%`; els.barVariable.style.width = `${vP}%`;
             els.textFixed.innerText = `Fixos: ${fP.toFixed(0)}%`; els.textVariable.innerText = `Var: ${vP.toFixed(0)}%`;
 
-            renderCalendar(state.items, state.salary);
+            renderCalendar(percentConsumed);
         }
 
-        function renderCalendar(items, totalSalary) {
+        function renderCalendar(percentConsumed) {
             els.calendarGrid.innerHTML = '';
-            const dayValue = totalSalary > 0 ? totalSalary / 30 : 1; 
             
-            const needCost = items.filter(i => i.category === 'need').reduce((s, i) => s + i.price, 0);
-            const desireCost = items.filter(i => i.category === 'desire').reduce((s, i) => s + i.price, 0);
-            
-            const dNeed = Math.ceil(needCost / dayValue);
-            const dDesire = Math.ceil(desireCost / dayValue);
-            const totalUsed = Math.min(dNeed + dDesire, 30);
-            
+            // Map percentage of salary consumed to 30 calendar days
+            // If I spent 50% of salary, 15 days are booked.
+            const totalUsed = Math.min(Math.ceil((percentConsumed / 100) * 30), 30);
             const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
-            if (totalUsed === 0) {
-                els.freedomDayLabel.innerHTML = "Você é livre dia <strong class='text-emerald-600'>01</strong>";
-            } else if (totalUsed >= 30) {
-                els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
-            } else {
-                els.freedomDayLabel.innerHTML = `Livre dia <strong class='text-emerald-600'>${String(freeDay).padStart(2, '0')}</strong>`;
-            }
+
+            if(totalUsed === 0) els.freedomDayLabel.innerHTML = "Livre: Dia 01";
+            else if (totalUsed >= 30) els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
+            else els.freedomDayLabel.innerHTML = `Livre dia <strong class='text-emerald-600'>${String(freeDay).padStart(2, '0')}</strong>`;
 
             for(let i=1; i<=30; i++) {
                 const day = document.createElement('div');
-                // Removidas classes de cor base (bg-slate-50, etc) daqui para evitar conflito
-                day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center day-cell cursor-default transition-all border';
+                day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center cursor-default transition-all border';
                 
-                if (i <= dNeed) { 
-                    day.className += ' bg-cyan-500 text-white border-cyan-600'; 
-                    day.title = `Dia ${i}: Fixo (Necessidade)`; 
-                    day.innerText = i; 
-                } else if (i <= dNeed + dDesire) { 
-                    day.className += ' bg-fuchsia-500 text-white border-fuchsia-600'; 
-                    day.title = `Dia ${i}: Variável (Desejo)`; 
-                    day.innerText = i; 
-                } else { 
-                    day.className += ' bg-emerald-100 text-emerald-600 border-emerald-200'; 
-                    day.title = `Dia ${i}: Livre`; 
-                    day.innerText = i; 
+                // Determine color based on item proportions (simplified for visual: first chunk Fixed, then Variable)
+                // We use global fixed/variable ratio to paint the used days
+                const fixedRatio = parseFloat(els.textFixed.innerText.replace(/\D/g,'')) / 100 || 0;
+                const fixedDays = Math.ceil(totalUsed * fixedRatio);
+                
+                if (i <= totalUsed) {
+                    if (i <= fixedDays) {
+                        day.className += ' bg-cyan-500 text-white border-cyan-600';
+                        day.title = `Dia ${i}: Fixo`;
+                    } else {
+                        day.className += ' bg-fuchsia-500 text-white border-fuchsia-600';
+                        day.title = `Dia ${i}: Variável`;
+                    }
+                    day.innerText = i;
+                } else {
+                    day.className += ' bg-emerald-100 text-emerald-600 border-emerald-200';
+                    day.title = `Dia ${i}: Livre`;
+                    day.innerText = i;
                 }
                 els.calendarGrid.appendChild(day);
             }
@@ -477,7 +485,6 @@
         function downloadShareImage() {
             const canvas = document.getElementById('shareCanvas'); const ctx = canvas.getContext('2d');
             const w = canvas.width; const h = canvas.height;
-            // Draw gradient background
             const grad = ctx.createLinearGradient(0,0,0,h); grad.addColorStop(0, '#1e1b4b'); grad.addColorStop(1, '#312e81');
             ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
             
