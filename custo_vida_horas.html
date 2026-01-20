@@ -433,7 +433,7 @@
             loadState();
             addListeners();
             calculateLogic();
-            // REMOVED explicit empty renderCalendar here to prevent clearing on refresh
+            // Important: Do NOT call renderCalendar here manually to allow renderCart to handle correct state logic
         });
 
         function addListeners() {
@@ -484,6 +484,12 @@
             }
         }
 
+        // Helper to get dynamic context based on current hourly rate
+        function getComparisonContext(hoursCost) {
+            const sortedComparisons = [...comparisons].sort((a, b) => Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost));
+            return `~ ${sortedComparisons[0].text}`;
+        }
+
         function addItem() {
             const name = els.itemName.value.trim();
             const price = parseFloat(els.itemPrice.value);
@@ -491,16 +497,17 @@
 
             if (!name || isNaN(price) || price <= 0) return;
 
+            // Note: We don't store static context anymore, we recalculate it in renderCart
+            // But we keep it in state object structure for consistency if needed
             const hoursCost = price / state.realHourlyRate;
-            const sortedComparisons = [...comparisons].sort((a, b) => Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost));
-            const context = `~ ${sortedComparisons[0].text}`;
+            const context = getComparisonContext(hoursCost);
 
             if (editingId) {
                 const index = state.items.findIndex(i => i.id === editingId);
-                if (index !== -1) state.items[index] = { ...state.items[index], name, price, category, context };
+                if (index !== -1) state.items[index] = { ...state.items[index], name, price, category };
                 resetEditMode();
             } else {
-                state.items.push({ id: Date.now(), name, price, category, context });
+                state.items.push({ id: Date.now(), name, price, category });
             }
 
             els.itemName.value = '';
@@ -575,8 +582,6 @@
             let variableTotal = 0;
 
             const sortedItems = [...state.items].sort((a, b) => {
-                // Keep categories separate but chronological within category? 
-                // Or just standard sort. Let's just sort by needs first.
                 if (a.category === b.category) return b.price - a.price;
                 return a.category === 'need' ? -1 : 1;
             });
@@ -596,6 +601,9 @@
                 const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
                 const badgeText = isNeed ? 'FIXO' : 'VARIÁVEL';
                 const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
+
+                // Recalculate context dynamically
+                const dynamicContext = getComparisonContext(hoursCost);
 
                 let investHtml = '';
                 if(item.price > 200) {
@@ -626,7 +634,7 @@
                     </div>
                     
                     <div class="flex justify-between items-center text-[10px] text-slate-500">
-                        <span>💡 ${item.context}</span>
+                        <span>💡 ${dynamicContext}</span>
                     </div>
 
                     ${investHtml}
