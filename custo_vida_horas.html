@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quanto Custa Sua Vida? - Light Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script>
         tailwind.config = {
             theme: {
@@ -52,7 +52,7 @@
         }
         
         .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(226, 232, 240, 0.8);
@@ -125,10 +125,10 @@
         </p>
     </header>
 
-    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in pb-10">
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-in pb-10">
         
-        <!-- COLUNA 1: Configuração da Realidade -->
-        <section class="glass-panel rounded-3xl p-8 h-fit">
+        <!-- COLUNA 1: Configuração da Realidade (Largura ajustada) -->
+        <section class="lg:col-span-5 glass-panel rounded-3xl p-8 h-fit">
             <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
                 <span class="w-1.5 h-6 bg-green-500 rounded-full"></span>
                 1. Configure sua Realidade
@@ -186,48 +186,19 @@
             </div>
         </section>
 
-        <!-- COLUNA 2: A Loja da Vida -->
-        <section class="flex flex-col gap-6 opacity-50 pointer-events-none transition-all duration-500" id="shopSection">
+        <!-- COLUNA 2: A Loja da Vida (Layout Reordenado) -->
+        <section class="lg:col-span-7 flex flex-col gap-6 opacity-50 pointer-events-none transition-all duration-500" id="shopSection">
             
-            <!-- Cards de Status (Bateria e Calendário) -->
-            <div class="glass-panel rounded-3xl p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- Bateria -->
-                    <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-end mb-2">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Energia Vendida</span>
-                            <span id="batteryPercent" class="text-xl font-bold text-slate-900">0%</span>
-                        </div>
-                        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200">
-                            <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000"></div>
-                        </div>
-                        <p id="batteryStatus" class="text-[10px] text-right mt-1 font-medium text-emerald-600">Nível: Seguro</p>
-                    </div>
-
-                    <!-- Calendário Mini -->
-                    <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-slate-500 uppercase">Liberdade</span>
-                            <span id="freedomDayLabel" class="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">Dia 01</span>
-                        </div>
-                        <div class="grid grid-cols-7 gap-1" id="calendarGrid">
-                            <!-- JS Injected -->
-                        </div>
-                        <div class="flex gap-2 mt-2 text-[8px] text-slate-400 uppercase font-bold justify-end">
-                            <span class="text-essential">● Nec</span>
-                            <span class="text-desire">● Des</span>
-                            <span class="text-freedom">● Liv</span>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="glass-panel rounded-3xl p-6 flex flex-col h-full">
+                
+                <!-- Título Loja -->
                 <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
                     <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>
                     2. Loja de Desejos
                 </h2>
 
-                <!-- Inputs Loja -->
-                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 transition-all duration-300" id="inputContainer">
+                <!-- Inputs Loja (Movido para cima) -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 transition-all duration-300 relative z-10" id="inputContainer">
                     <div class="flex flex-col md:flex-row gap-3 mb-4">
                         <div class="flex-grow">
                             <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Item</label>
@@ -261,29 +232,71 @@
                     </div>
                 </div>
 
-                <!-- Lista -->
-                <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1" id="itemsList">
+                <!-- Lista (Movido para cima) -->
+                <div class="space-y-3 max-h-[300px] overflow-y-auto pr-1 mb-8" id="itemsList">
                     <!-- Items JS -->
                 </div>
 
                 <!-- Empty State -->
-                <div id="emptyState" class="text-center py-10 opacity-60">
+                <div id="emptyState" class="text-center py-6 opacity-60 mb-4">
                     <p class="text-slate-400 text-sm">Sua lista está vazia.</p>
                 </div>
 
-                <!-- Total -->
-                <div id="grandTotalContainer" class="hidden mt-6 pt-6 border-t border-slate-200 text-center">
-                    <p class="text-slate-500 mb-2 text-xs font-bold uppercase tracking-widest">Custo Total de Vida</p>
-                    <div class="text-5xl font-bold text-slate-900 mb-2 tracking-tight" id="totalLifeTime">0h</div>
-                    <div class="inline-block px-4 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 mb-4">
-                        <p class="text-indigo-700 text-xs font-medium" id="totalDays">Equivale a 0 dias.</p>
-                    </div>
+                <!-- DASHBOARD DE IMPACTO (Movido para baixo e Aumentado) -->
+                <div class="mt-auto border-t border-slate-200 pt-8">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 text-center">Impacto na sua Realidade</h3>
                     
-                    <div class="flex justify-center">
-                        <button onclick="shareResults()" class="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors font-medium">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                            Copiar Relatório
-                        </button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        
+                        <!-- Bateria (Maior destaque) -->
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-end mb-3">
+                                <div>
+                                    <span class="text-sm font-extrabold text-slate-600 uppercase block">Energia Vendida</span>
+                                    <span class="text-xs text-slate-400">Quanto do mês já se foi</span>
+                                </div>
+                                <span id="batteryPercent" class="text-3xl font-black text-slate-900">0%</span>
+                            </div>
+                            <div class="w-full h-5 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200 mb-2">
+                                <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000"></div>
+                            </div>
+                            <p id="batteryStatus" class="text-xs text-right font-bold text-emerald-600">Nível: Seguro</p>
+                        </div>
+
+                        <!-- Calendário (Maior destaque) -->
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <span class="text-sm font-extrabold text-slate-600 uppercase block">Liberdade</span>
+                                    <span class="text-xs text-slate-400">Quando o dinheiro é seu</span>
+                                </div>
+                                <span id="freedomDayLabel" class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-700 font-bold border border-slate-200">Dia 01</span>
+                            </div>
+                            <div class="grid grid-cols-7 gap-2" id="calendarGrid">
+                                <!-- JS Injected - Cells will be bigger -->
+                            </div>
+                            <div class="flex gap-3 mt-3 text-[10px] text-slate-400 uppercase font-bold justify-center">
+                                <span class="text-essential flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> Nec</span>
+                                <span class="text-desire flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Des</span>
+                                <span class="text-freedom flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-100 border border-emerald-300"></span> Liv</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Total Geral -->
+                    <div id="grandTotalContainer" class="hidden mt-8 text-center bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                        <p class="text-slate-500 mb-1 text-xs font-bold uppercase tracking-widest">Custo Total de Vida</p>
+                        <div class="text-5xl md:text-6xl font-black text-slate-900 mb-2 tracking-tighter" id="totalLifeTime">0h</div>
+                        <div class="inline-block px-4 py-1.5 rounded-lg bg-indigo-100 border border-indigo-200 mb-4">
+                            <p class="text-indigo-800 text-sm font-bold" id="totalDays">Equivale a 0 dias.</p>
+                        </div>
+                        
+                        <div class="flex justify-center">
+                            <button onclick="shareResults()" class="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors font-bold uppercase tracking-wide bg-white px-4 py-2 rounded-lg border border-slate-200 hover:border-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                                Copiar Relatório
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -354,7 +367,7 @@
             { text: "um filme longo", hours: 3 },
             { text: "uma noite de sono", hours: 8 },
             { text: "uma maratona de série", hours: 10 },
-            { text: "uma viagem internacional", hours: 12 },
+            { text: "um voo longo de avião", hours: 12 },
             { text: "zerar um jogo RPG", hours: 40 },
             { text: "um fim de semana", hours: 48 },
             { text: "férias de uma semana", hours: 168 },
@@ -379,7 +392,7 @@
             emptyState: document.getElementById('emptyState'),
             totalContainer: document.getElementById('grandTotalContainer'),
             totalTime: document.getElementById('totalLifeTime'),
-            totalPrice: document.getElementById('totalPrice'), // Not used in this layout explicitly but kept for logic
+            totalPrice: document.getElementById('totalPrice'), 
             totalDays: document.getElementById('totalDays'),
             batteryBar: document.getElementById('batteryBar'),
             batteryPercent: document.getElementById('batteryPercent'),
@@ -571,7 +584,7 @@
                         </div>
                     </div>
                     
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mb-2">
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
                         <div class="${barColor} h-full" style="width: ${percent}%"></div>
                     </div>
                     
@@ -611,15 +624,15 @@
             if (p < 30) {
                 bar.classList.add('bg-gradient-to-r', 'from-emerald-400', 'to-emerald-500');
                 status.innerText = "Nível: Sustentável";
-                status.className = "text-[10px] text-right mt-1 font-medium text-emerald-600";
+                status.className = "text-xs text-right font-bold text-emerald-600";
             } else if (p < 60) {
                 bar.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-orange-500');
                 status.innerText = "Nível: Atenção";
-                status.className = "text-[10px] text-right mt-1 font-medium text-amber-600";
+                status.className = "text-xs text-right font-bold text-amber-600";
             } else {
                 bar.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
                 status.innerText = "Nível: Crítico";
-                status.className = "text-[10px] text-right mt-1 font-medium text-red-600 font-bold";
+                status.className = "text-xs text-right font-bold text-red-600";
             }
         }
 
@@ -646,7 +659,7 @@
 
             for(let i=1; i<=30; i++) {
                 const day = document.createElement('div');
-                day.className = 'h-2 w-full rounded-sm text-[0px] flex items-center justify-center day-cell';
+                day.className = 'h-3 w-full rounded-sm text-[0px] flex items-center justify-center day-cell';
                 
                 if (i <= dNeed) {
                     day.classList.add('bg-cyan-500');
