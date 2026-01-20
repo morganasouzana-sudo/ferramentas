@@ -125,7 +125,7 @@
         </p>
     </header>
 
-    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 animate-fade-in pb-10">
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in pb-10">
         
         <!-- COLUNA 1: Configuração da Realidade (Largura ajustada) -->
         <section class="lg:col-span-5 glass-panel rounded-3xl p-8 h-fit">
@@ -564,8 +564,9 @@
                 let investHtml = '';
                 if(item.price > 200) {
                     const future = calculateCompoundInterest(item.price);
-                    investHtml = `<div class="mt-3 text-[10px] text-amber-600 bg-amber-50 p-2 rounded flex gap-2 items-center">
-                        <span>📈</span> Se investido (10 anos): <strong>${formatCurrency(future)}</strong>
+                    investHtml = `<div class="mt-3 text-xs text-amber-800 bg-amber-100 p-2.5 rounded-lg border border-amber-200 shadow-sm flex gap-2 items-center">
+                        <span class="text-base">📈</span> 
+                        <span>Se investido (10 anos): <strong class="text-amber-900 text-sm">${formatCurrency(future)}</strong></span>
                     </div>`;
                 }
 
