@@ -95,7 +95,7 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Dias/Semana</label>
-                        <input type="number" id="daysPerWeek" value="5" class="glass-input w-full rounded-xl p-3 text-sm font-semibold placeholder-slate-400">
+                        <input type="number" id="daysPerWeek" value="5" max="7" min="1" class="glass-input w-full rounded-xl p-3 text-sm font-semibold placeholder-slate-400">
                     </div>
                 </div>
                 <div class="bg-white p-3 rounded-xl border border-slate-200">
@@ -202,13 +202,17 @@
                             </div>
                         </div>
 
-                        <!-- Calendário -->
+                        <!-- Calendário Dinâmico -->
                         <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-between">
                             <div class="flex justify-between items-center mb-3">
-                                <span class="text-[10px] font-bold text-slate-500 uppercase">Liberdade Financeira</span>
-                                <span id="freedomDayLabel" class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold border border-slate-200">Dia 01</span>
+                                <div>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase block">Liberdade Financeira</span>
+                                    <span class="text-[9px] text-slate-400" id="calendarSubtitle">Visualizando seus dias de trabalho</span>
+                                </div>
+                                <span id="freedomDayLabel" class="text-[9px] bg-slate-100 px-2 py-0.5 rounded text-slate-600 font-bold border border-slate-200">Livre: Dia 01</span>
                             </div>
-                            <div class="grid grid-cols-7 gap-1.5" id="calendarGrid"></div>
+                            <!-- Grid Dinâmico que se adapta aos dias da semana -->
+                            <div id="calendarGrid" class="grid gap-1.5"></div>
                             <div class="flex gap-2 mt-2 text-[8px] text-slate-400 uppercase font-bold justify-center">
                                 <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-cyan-500"></span> Fixo</span>
                                 <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-fuchsia-500"></span> Var</span>
@@ -244,11 +248,11 @@
             itemName: document.getElementById('itemName'), itemPrice: document.getElementById('itemPrice'), itemsList: document.getElementById('itemsList'), emptyState: document.getElementById('emptyState'),
             totalContainer: document.getElementById('grandTotalContainer'), totalTime: document.getElementById('totalLifeTime'), totalDays: document.getElementById('totalDays'),
             batteryBar: document.getElementById('batteryBar'), batteryPercent: document.getElementById('batteryPercent'), batteryStatus: document.getElementById('batteryStatus'),
-            calendarGrid: document.getElementById('calendarGrid'), freedomDayLabel: document.getElementById('freedomDayLabel'),
+            calendarGrid: document.getElementById('calendarGrid'), freedomDayLabel: document.getElementById('freedomDayLabel'), calendarSubtitle: document.getElementById('calendarSubtitle'),
             barFixed: document.getElementById('barFixed'), barVariable: document.getElementById('barVariable'), textFixed: document.getElementById('textFixed'), textVariable: document.getElementById('textVariable')
         };
 
-        let state = { salary: 0, hoursPerDay: 8, daysPerWeek: 5, commuteMinutes: 60, realHourlyRate: 0, monthlyWorkHours: 0, items: [] };
+        let state = { salary: 0, hoursPerDay: 8, daysPerWeek: 5, commuteMinutes: 60, realHourlyRate: 0, monthlyWorkHours: 0, totalMonthlyWorkDays: 22, items: [] };
         let editingId = null;
         
         const comparisons = [
@@ -273,10 +277,14 @@
             state.commuteMinutes = parseInt(els.commuteRange.value) || 0;
 
             if (state.salary > 0 && state.hoursPerDay > 0) {
-                const monthlyDays = state.daysPerWeek * 4.33;
-                const nominalRate = state.salary / (monthlyDays * state.hoursPerDay);
+                const WEEKS_MONTH = 4.33;
+                state.totalMonthlyWorkDays = Math.round(state.daysPerWeek * WEEKS_MONTH);
+                
+                const nominalRate = state.salary / (state.totalMonthlyWorkDays * state.hoursPerDay);
                 const dailyTotalHours = state.hoursPerDay + (state.commuteMinutes / 60);
-                state.monthlyWorkHours = monthlyDays * dailyTotalHours;
+                
+                // Real Hourly Rate is based on Total Hours Invested (Work + Commute)
+                state.monthlyWorkHours = state.totalMonthlyWorkDays * dailyTotalHours;
                 state.realHourlyRate = state.salary / state.monthlyWorkHours;
 
                 els.realRate.innerText = formatCurrency(state.realHourlyRate);
@@ -286,6 +294,11 @@
 
                 els.resultCard.classList.remove('hidden');
                 els.shopSection.classList.remove('opacity-50', 'pointer-events-none');
+                
+                // Update grid columns based on work days per week
+                els.calendarGrid.style.gridTemplateColumns = `repeat(${Math.ceil(state.daysPerWeek)}, minmax(0, 1fr))`;
+                els.calendarSubtitle.innerText = `Baseado em ${state.totalMonthlyWorkDays} dias úteis/mês`;
+
                 renderCart();
             } else {
                 els.resultCard.classList.add('hidden');
@@ -418,10 +431,14 @@
         function updateStats(money, hours, fixed, variable) {
             els.totalTime.innerText = formatTime(hours);
             
-            // Logic Fix: Days of work needed = Total Cost / Real Daily Income (Salary / Work Days in Month)
-            // Or simpler: Total Hours / Hours Per Day
-            // 48h / 8h = 6 days. 
-            const workDaysNeeded = hours / state.hoursPerDay;
+            // KEY FIX: Coherence between text and calendar
+            // 1. Calculate Daily Wage based on Work Days only (Salary / Monthly Work Days)
+            const dailyWage = state.salary / state.totalMonthlyWorkDays;
+            
+            // 2. Days Cost = Total Cost / Daily Wage
+            // This represents exactly how many "shifts" you need to work to pay for the items.
+            const workDaysNeeded = money / dailyWage;
+            
             els.totalDays.innerText = `Aprox. ${workDaysNeeded.toFixed(1)} dias de trabalho`;
 
             const percentConsumed = (money / state.salary) * 100;
@@ -438,28 +455,31 @@
             els.barFixed.style.width = `${fP}%`; els.barVariable.style.width = `${vP}%`;
             els.textFixed.innerText = `Fixos: ${fP.toFixed(0)}%`; els.textVariable.innerText = `Var: ${vP.toFixed(0)}%`;
 
-            renderCalendar(money, fixed, variable);
+            // 3. Pass the EXACT SAME workDaysNeeded to the calendar
+            renderCalendar(workDaysNeeded, fixed, variable);
         }
 
-        function renderCalendar(totalMoney, fixedMoney, variableMoney) {
+        function renderCalendar(workDaysNeeded, fixedTotal, variableTotal) {
             els.calendarGrid.innerHTML = '';
             
-            // Calculate ratio based on MONEY vs SALARY.
-            // If money >= salary, ratio >= 1 (full calendar).
-            const totalRatio = Math.min(totalMoney / state.salary, 1);
-            const totalUsed = Math.ceil(totalRatio * 30);
+            // Grid Size = Total Work Days in Month (e.g., 22 for 5-day weeks, 26 for 6-day weeks)
+            const totalCells = state.totalMonthlyWorkDays;
             
-            // Calculate portion for Fixed vs Variable within the used cells
-            const fixedRatio = totalMoney > 0 ? (fixedMoney / totalMoney) : 0;
+            // Cells to paint = workDaysNeeded (clamped to totalCells)
+            const totalUsed = Math.min(Math.ceil(workDaysNeeded), totalCells);
+            
+            // Calculate ratio of Fixed vs Variable within the used days
+            const totalMoney = fixedTotal + variableTotal;
+            const fixedRatio = totalMoney > 0 ? (fixedTotal / totalMoney) : 0;
             const fixedDays = Math.ceil(totalUsed * fixedRatio);
 
-            const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
+            const freeDay = totalUsed < totalCells ? totalUsed + 1 : 'Nunca';
 
             if(totalUsed === 0) els.freedomDayLabel.innerHTML = "Livre: Dia 01";
-            else if (totalUsed >= 30) els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
-            else els.freedomDayLabel.innerHTML = `Livre dia <strong class='text-emerald-600'>${String(freeDay).padStart(2, '0')}</strong>`;
+            else if (totalUsed >= totalCells) els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
+            else els.freedomDayLabel.innerHTML = `Livre: <strong class='text-emerald-600'>Dia ${String(freeDay).padStart(2, '0')}</strong>`;
 
-            for(let i=1; i<=30; i++) {
+            for(let i=1; i<=totalCells; i++) {
                 const day = document.createElement('div');
                 day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center cursor-default transition-all border';
                 
