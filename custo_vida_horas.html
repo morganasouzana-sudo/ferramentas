@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quanto Custa Sua Vida? - Light</title>
+    <title>Quanto Custa Sua Vida? - Light Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script>
@@ -18,7 +18,7 @@
                         surface: '#ffffff',     // White
                         primary: '#6366f1',     // Indigo 500
                         secondary: '#10b981',   // Emerald 500
-                        essential: '#0891b2',   // Cyan 600 (Darker for contrast)
+                        essential: '#0891b2',   // Cyan 600
                         desire: '#c026d3',      // Fuchsia 600
                         freedom: '#059669',     // Emerald 600
                         gold: '#d97706',        // Amber 600
@@ -55,14 +55,14 @@
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(226, 232, 240, 0.8); /* Slate 200 */
+            border: 1px solid rgba(226, 232, 240, 0.8);
             box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.08);
         }
 
         .glass-input {
-            background: #f1f5f9; /* Slate 100 */
-            border: 1px solid #cbd5e1; /* Slate 300 */
-            color: #0f172a; /* Slate 900 */
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
             transition: all 0.3s ease;
         }
         .glass-input:focus {
@@ -72,21 +72,32 @@
             outline: none;
         }
 
-        .glass-input::placeholder {
-            color: #94a3b8;
+        /* Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 5px rgba(99, 102, 241, 0.4);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
         }
 
-        /* Calendar Grid Animation */
-        .day-cell {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .day-cell:hover {
-            transform: scale(1.1);
-            z-index: 10;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
+        .day-cell { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .day-cell:hover { transform: scale(1.1); z-index: 10; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
@@ -114,177 +125,166 @@
         </p>
     </header>
 
-    <main class="w-full max-w-3xl space-y-8 pb-10">
+    <main class="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-2 gap-8 animate-fade-in pb-10">
         
-        <!-- STEP 1: Configuração da Realidade -->
-        <section class="glass-panel rounded-3xl p-8 animate-slide-up relative overflow-hidden">
-            
-            <div class="flex justify-between items-end mb-8">
+        <!-- COLUNA 1: Configuração da Realidade -->
+        <section class="glass-panel rounded-3xl p-8 h-fit">
+            <h2 class="text-xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                <span class="w-1.5 h-6 bg-green-500 rounded-full"></span>
+                1. Configure sua Realidade
+            </h2>
+
+            <div class="space-y-5">
+                <!-- Salário -->
                 <div>
-                    <h2 class="text-2xl font-bold text-slate-900 mb-1">1. Configure sua Realidade</h2>
-                    <p class="text-sm text-slate-500">Dados para calcular seu Valor Hora Real.</p>
+                    <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Salário Líquido (R$)</label>
+                    <input type="number" id="salary" placeholder="Ex: 3500" class="glass-input w-full rounded-xl p-3 text-lg font-semibold placeholder-slate-400">
                 </div>
-                <button onclick="toggleDetails()" class="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1 bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 border border-indigo-100">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
-                    Fórmula
-                </button>
-            </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Salário Líquido</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-3 text-slate-400 text-sm">R$</span>
-                        <input type="number" id="salary" class="glass-input w-full rounded-xl py-2.5 pl-9 pr-4 text-sm font-semibold" placeholder="3500">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Horas/Dia</label>
+                        <input type="number" id="hoursPerDay" value="8" class="glass-input w-full rounded-xl p-3 font-semibold placeholder-slate-400">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1 uppercase tracking-wider">Dias/Semana</label>
+                        <input type="number" id="daysPerWeek" value="5" class="glass-input w-full rounded-xl p-3 font-semibold placeholder-slate-400">
                     </div>
                 </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Horas/Dia</label>
-                    <input type="number" id="hoursPerDay" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold" placeholder="8">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Dias/Semana</label>
-                    <input type="number" id="daysPerWeek" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold" placeholder="5">
-                </div>
-                <div class="space-y-2">
-                    <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1 flex justify-between">
-                        Deslocamento
-                        <span class="text-[10px] text-slate-400 font-normal">(minutos)</span>
-                    </label>
-                    <input type="number" id="commuteMinutes" class="glass-input w-full rounded-xl py-2.5 px-4 text-sm font-semibold border-indigo-200 focus:border-indigo-500" placeholder="90">
-                </div>
-            </div>
 
-            <!-- Explainer Modal -->
-            <div id="calcDetails" class="hidden mb-6 text-sm text-slate-600 bg-indigo-50 p-4 rounded-xl border border-indigo-100 shadow-sm">
-                <p><strong>A Lógica:</strong> O cálculo desconta o tempo de deslocamento como "hora trabalhada não paga", reduzindo seu valor por hora real. Tempo preso no trânsito é tempo de vida vendido ao trabalho.</p>
-            </div>
-
-            <!-- Result Card -->
-            <div id="wageResult" class="hidden transition-all duration-700">
-                <div class="bg-gradient-to-br from-indigo-50 to-slate-100 rounded-2xl p-6 border border-indigo-100 relative overflow-hidden shadow-inner">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-200/30 blur-3xl rounded-full"></div>
-                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
-                        <div class="text-center md:text-left">
-                            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Nominal</p>
-                            <p class="text-2xl font-bold text-slate-500" id="nominalWageDisplay">R$ 0,00</p>
-                        </div>
-                        <div class="hidden md:block h-12 w-px bg-slate-200"></div>
-                        <div class="text-center md:text-right">
-                            <p class="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">Seu Valor Real</p>
-                            <div class="flex items-baseline justify-center md:justify-end gap-2">
-                                <p class="text-4xl md:text-5xl font-bold text-slate-900 tracking-tighter" id="realWageDisplay">R$ 0,00</p>
-                                <span class="text-lg text-slate-500 font-medium">/h</span>
-                            </div>
-                            <p class="text-sm text-indigo-600 mt-2 font-medium" id="commuteImpactDisplay"></p>
-                        </div>
+                <!-- Slider Deslocamento -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            Deslocamento (Ida + Volta)
+                        </label>
+                        <span id="commuteLabel" class="text-xs font-mono bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">60 min</span>
                     </div>
+                    <input type="range" id="commuteRange" min="0" max="300" value="60" step="5" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer">
+                    <p class="text-[10px] text-slate-400 mt-2">
+                        Tempo de vida gasto no trânsito reduz seu valor real.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Resultado -->
+            <div id="resultCard" class="mt-8 pt-6 border-t border-slate-200 hidden">
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider">Valor Nominal</span>
+                    <span id="nominalWageDisplay" class="text-slate-400 text-sm line-through decoration-red-400/50">R$ 0,00/h</span>
+                </div>
+                
+                <div class="bg-gradient-to-br from-indigo-50 to-white p-5 rounded-xl border border-indigo-100 shadow-sm relative overflow-hidden group">
+                    <div class="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <p class="text-[10px] text-indigo-600 uppercase tracking-widest mb-1 font-bold">Seu Valor Real / Hora</p>
+                    <div class="flex items-baseline gap-1">
+                        <h3 id="realWageDisplay" class="text-4xl font-bold text-slate-900 tracking-tighter">R$ 0,00</h3>
+                        <span class="text-slate-500 text-lg">/h</span>
+                    </div>
+                    <p id="commuteImpactDisplay" class="text-xs text-slate-500 mt-2 font-medium"></p>
                 </div>
             </div>
         </section>
 
-        <!-- STEP 2: O Conversor (Gamified) -->
-        <section class="glass-panel rounded-3xl p-8 transition-all duration-500 opacity-50 pointer-events-none" id="converterSection">
-
-            <!-- Life Energy Battery (Gamification) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <!-- Battery Widget -->
-                <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-center">
-                    <div class="flex justify-between items-end mb-2">
-                        <div>
-                            <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider">Comprometimento</h3>
-                            <p class="text-xs text-slate-400">Energia vital vendida</p>
+        <!-- COLUNA 2: A Loja da Vida -->
+        <section class="flex flex-col gap-6 opacity-50 pointer-events-none transition-all duration-500" id="shopSection">
+            
+            <!-- Cards de Status (Bateria e Calendário) -->
+            <div class="glass-panel rounded-3xl p-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Bateria -->
+                    <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Energia Vendida</span>
+                            <span id="batteryPercent" class="text-xl font-bold text-slate-900">0%</span>
                         </div>
-                        <span id="batteryPercent" class="text-2xl font-bold text-slate-900">0%</span>
-                    </div>
-                    <div class="w-full h-4 bg-slate-100 rounded-full overflow-hidden relative shadow-inner border border-slate-200">
-                        <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000 ease-out"></div>
-                    </div>
-                    <p id="batteryStatus" class="text-xs text-right mt-2 font-mono text-emerald-600 font-medium">Nível: Seguro</p>
-                </div>
-
-                <!-- SLAVERY CALENDAR WIDGET -->
-                <div class="p-5 bg-white rounded-2xl border border-slate-200 shadow-sm">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="text-sm font-bold text-slate-600 uppercase tracking-wider">Calendário de Liberdade</h3>
-                        <span id="freedomDayLabel" class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 border border-slate-200">Você é livre dia 01</span>
-                    </div>
-                    <!-- Calendar Grid -->
-                    <div class="grid grid-cols-7 gap-1.5" id="calendarGrid">
-                        <!-- Days generated via JS -->
-                    </div>
-                    <div class="flex justify-between items-center mt-3 text-[10px] text-slate-500">
-                        <div class="flex gap-2">
-                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-cyan-500"></div> Necessidade</span>
-                            <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-fuchsia-500"></div> Desejo</span>
+                        <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200">
+                            <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000"></div>
                         </div>
-                        <span class="flex items-center gap-1"><div class="w-2 h-2 rounded-full bg-emerald-100 border border-emerald-300"></div> Liberdade</span>
+                        <p id="batteryStatus" class="text-[10px] text-right mt-1 font-medium text-emerald-600">Nível: Seguro</p>
                     </div>
-                </div>
-            </div>
 
-            <h2 class="text-2xl font-bold text-slate-900 mb-6">2. A Loja da Vida</h2>
-
-            <!-- Input Area -->
-            <div class="flex flex-col gap-4 mb-8 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm transition-all duration-300" id="inputContainer">
-                <div class="flex flex-col md:flex-row gap-3">
-                    <div class="flex-grow">
-                        <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">O que você quer?</label>
-                        <input type="text" id="itemName" class="glass-input w-full h-12 rounded-lg px-4 text-base" placeholder="Ex: iPhone 15, Jantar Japonês">
-                    </div>
-                    <div class="w-full md:w-36 relative">
-                        <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Preço</label>
-                        <span class="absolute left-3 top-[36px] text-slate-400 text-sm">R$</span>
-                        <input type="number" id="itemPrice" class="glass-input w-full h-12 rounded-lg pl-8 pr-4 text-base" placeholder="0.00">
+                    <!-- Calendário Mini -->
+                    <div class="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-slate-500 uppercase">Liberdade</span>
+                            <span id="freedomDayLabel" class="text-[10px] bg-slate-100 px-2 py-0.5 rounded text-slate-600">Dia 01</span>
+                        </div>
+                        <div class="grid grid-cols-7 gap-1" id="calendarGrid">
+                            <!-- JS Injected -->
+                        </div>
+                        <div class="flex gap-2 mt-2 text-[8px] text-slate-400 uppercase font-bold justify-end">
+                            <span class="text-essential">● Nec</span>
+                            <span class="text-desire">● Des</span>
+                            <span class="text-freedom">● Liv</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Category Selection -->
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div class="flex gap-2 w-full md:w-auto">
-                        <div class="flex-1">
-                            <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio" checked>
-                            <label for="cat-desire" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-sm text-fuchsia-600 hover:bg-fuchsia-50 transition-all w-full md:w-auto font-medium">
-                                <span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Desejo
-                            </label>
+                <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-6 bg-purple-500 rounded-full"></span>
+                    2. Loja de Desejos
+                </h2>
+
+                <!-- Inputs Loja -->
+                <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm mb-6 transition-all duration-300" id="inputContainer">
+                    <div class="flex flex-col md:flex-row gap-3 mb-4">
+                        <div class="flex-grow">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Item</label>
+                            <input type="text" id="itemName" class="glass-input w-full rounded-lg p-3 text-base" placeholder="Ex: iPhone 15, Jantar">
                         </div>
-                        <div class="flex-1">
-                            <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio">
-                            <label for="cat-need" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-sm text-cyan-700 hover:bg-cyan-50 transition-all w-full md:w-auto font-medium">
-                                <span class="w-2 h-2 rounded-full bg-cyan-600"></span> Necessidade
-                            </label>
+                        <div class="w-full md:w-32 relative">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Preço</label>
+                            <input type="number" id="itemPrice" class="glass-input w-full rounded-lg p-3 text-base text-right" placeholder="0.00">
                         </div>
+                    </div>
+
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <div class="flex-1">
+                                <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio" checked>
+                                <label for="cat-desire" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-xs font-bold text-fuchsia-600 hover:bg-fuchsia-50 transition-all w-full md:w-auto">
+                                    <span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> DESEJO
+                                </label>
+                            </div>
+                            <div class="flex-1">
+                                <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio">
+                                <label for="cat-need" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-xs font-bold text-cyan-600 hover:bg-cyan-50 transition-all w-full md:w-auto">
+                                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span> NECESSIDADE
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <button onclick="addItem()" id="mainActionBtn" class="w-full md:w-auto bg-slate-900 text-white hover:bg-slate-800 font-bold px-6 py-2.5 rounded-lg transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 text-sm">
+                            <span id="btnIcon">+</span> <span id="btnText">Adicionar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Lista -->
+                <div class="space-y-3 max-h-[400px] overflow-y-auto pr-1" id="itemsList">
+                    <!-- Items JS -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-10 opacity-60">
+                    <p class="text-slate-400 text-sm">Sua lista está vazia.</p>
+                </div>
+
+                <!-- Total -->
+                <div id="grandTotalContainer" class="hidden mt-6 pt-6 border-t border-slate-200 text-center">
+                    <p class="text-slate-500 mb-2 text-xs font-bold uppercase tracking-widest">Custo Total de Vida</p>
+                    <div class="text-5xl font-bold text-slate-900 mb-2 tracking-tight" id="totalLifeTime">0h</div>
+                    <div class="inline-block px-4 py-1.5 rounded-lg bg-indigo-50 border border-indigo-100 mb-4">
+                        <p class="text-indigo-700 text-xs font-medium" id="totalDays">Equivale a 0 dias.</p>
                     </div>
                     
-                    <button onclick="addItem()" id="mainActionBtn" class="w-full md:w-auto h-12 bg-slate-900 text-white hover:bg-slate-800 font-bold px-8 rounded-lg transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" id="mainBtnIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        <span id="mainBtnText">Calcular Custo</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Shopping List -->
-            <div class="space-y-4" id="itemsList"></div>
-
-            <!-- Empty State -->
-            <div id="emptyState" class="text-center py-10 opacity-60">
-                <p class="text-slate-400 text-sm">Sua lista está vazia. Adicione um desejo para ver o peso dele.</p>
-            </div>
-
-            <!-- Grand Total & Actions -->
-            <div id="grandTotalContainer" class="hidden mt-10 pt-8 border-t border-slate-200 text-center">
-                <p class="text-slate-500 mb-2 text-sm font-bold uppercase tracking-widest">Custo Total de Vida</p>
-                <div class="text-5xl md:text-6xl font-bold text-slate-900 mb-3 tracking-tight" id="totalLifeTime">0h 00m</div>
-                <div class="inline-block px-4 py-2 rounded-lg bg-indigo-50 border border-indigo-100 mb-6">
-                    <p class="text-indigo-700 text-sm font-medium" id="totalDays">Equivale a 0 dias de trabalho.</p>
-                </div>
-
-                <!-- Share Button -->
-                <div class="flex justify-center">
-                    <button onclick="shareResults()" class="flex items-center gap-2 px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 rounded-xl transition-all font-medium text-sm border border-slate-200 shadow-sm hover:shadow-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-                        Compartilhar Consciência
-                    </button>
+                    <div class="flex justify-center">
+                        <button onclick="shareResults()" class="text-xs text-slate-500 hover:text-slate-900 flex items-center gap-2 transition-colors font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+                            Copiar Relatório
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -293,10 +293,10 @@
 
     <footer class="mt-auto pb-8 text-center px-4 w-full border-t border-slate-200 pt-8 bg-slate-50">
         <p class="text-slate-500 text-sm font-medium mb-2">
-            Inspirado no livro <span class="text-slate-700 italic font-semibold">"Your Money or Your Life"</span> de Vicki Robin e Joe Dominguez.
+            Inspirado no livro <span class="text-slate-700 italic font-semibold">"Your Money or Your Life"</span>
         </p>
         <p class="text-slate-400 text-xs">
-            Uma ferramenta de consciência financeira. Dados salvos apenas no seu dispositivo.
+            Dados salvos localmente no seu dispositivo.
         </p>
     </footer>
 
@@ -334,56 +334,52 @@
 
     <!-- Main Logic -->
     <script>
-        // State
         let state = {
             salary: 0,
-            hoursPerDay: 0,
-            daysPerWeek: 0,
-            commuteMinutes: 0,
+            hoursPerDay: 8,
+            daysPerWeek: 5,
+            commuteMinutes: 60,
             realHourlyRate: 0,
             monthlyWorkHours: 0,
             items: []
         };
         
-        let editingId = null; // Track editing state
+        let editingId = null;
 
         const comparisons = [
             { text: "escovar os dentes", hours: 0.05 },
-            { text: "ouvir sua música favorita", hours: 0.08 },
-            { text: "fazer um cafézinho", hours: 0.15 },
-            { text: "um episódio de sitcom", hours: 0.4 },
-            { text: "uma aula de spinning", hours: 0.75 },
-            { text: "um almoço de domingo", hours: 1.5 },
-            { text: "assistir 'Vingadores: Ultimato'", hours: 3 },
-            { text: "uma manhã de sábado preguiçosa", hours: 4 },
-            { text: "uma boa noite de sono", hours: 8 },
-            { text: "maratonar uma temporada de série", hours: 10 },
-            { text: "um voo Brasil -> Europa", hours: 12 },
-            { text: "zerar um jogo longo (RPG)", hours: 40 },
-            { text: "um fim de semana na praia", hours: 48 },
-            { text: "uma semana inteira de férias", hours: 168 },
+            { text: "um cafezinho", hours: 0.15 },
+            { text: "um episódio de série", hours: 0.5 },
+            { text: "um almoço", hours: 1.5 },
+            { text: "um filme longo", hours: 3 },
+            { text: "uma noite de sono", hours: 8 },
+            { text: "uma maratona de série", hours: 10 },
+            { text: "uma viagem internacional", hours: 12 },
+            { text: "zerar um jogo RPG", hours: 40 },
+            { text: "um fim de semana", hours: 48 },
+            { text: "férias de uma semana", hours: 168 },
             { text: "um mês sabático", hours: 720 },
-            { text: "aprender um novo idioma do zero", hours: 1000 },
-            { text: "uma gestação completa", hours: 6500 }
+            { text: "uma gestação", hours: 6500 }
         ];
 
-        // DOM Elements
         const els = {
             salary: document.getElementById('salary'),
-            hoursPerDay: document.getElementById('hoursPerDay'),
-            daysPerWeek: document.getElementById('daysPerWeek'),
-            commute: document.getElementById('commuteMinutes'),
-            wageResult: document.getElementById('wageResult'),
-            nominalDisplay: document.getElementById('nominalWageDisplay'),
-            realDisplay: document.getElementById('realWageDisplay'),
+            hours: document.getElementById('hoursPerDay'),
+            days: document.getElementById('daysPerWeek'),
+            commuteRange: document.getElementById('commuteRange'),
+            commuteLabel: document.getElementById('commuteLabel'),
+            resultCard: document.getElementById('resultCard'),
+            shopSection: document.getElementById('shopSection'),
+            nominalRate: document.getElementById('nominalWageDisplay'),
+            realRate: document.getElementById('realWageDisplay'),
             commuteImpact: document.getElementById('commuteImpactDisplay'),
-            converterSection: document.getElementById('converterSection'),
             itemName: document.getElementById('itemName'),
             itemPrice: document.getElementById('itemPrice'),
             itemsList: document.getElementById('itemsList'),
             emptyState: document.getElementById('emptyState'),
             totalContainer: document.getElementById('grandTotalContainer'),
             totalTime: document.getElementById('totalLifeTime'),
+            totalPrice: document.getElementById('totalPrice'), // Not used in this layout explicitly but kept for logic
             totalDays: document.getElementById('totalDays'),
             batteryBar: document.getElementById('batteryBar'),
             batteryPercent: document.getElementById('batteryPercent'),
@@ -392,77 +388,59 @@
             freedomDayLabel: document.getElementById('freedomDayLabel')
         };
 
-        // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             addListeners();
-            calculateRealWage();
-            renderCalendar([], 0); // Initial empty calendar
+            calculateLogic();
+            renderCalendar([], 0);
         });
 
         function addListeners() {
-            [els.salary, els.hoursPerDay, els.daysPerWeek, els.commute].forEach(input => {
-                input.addEventListener('input', () => {
-                    calculateRealWage();
-                    saveState();
-                });
+            [els.salary, els.hours, els.days].forEach(el => el.addEventListener('input', () => { calculateLogic(); saveState(); }));
+            
+            els.commuteRange.addEventListener('input', (e) => {
+                els.commuteLabel.innerText = `${e.target.value} min`;
+                calculateLogic();
+                saveState();
             });
 
-            els.itemPrice.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') addItem();
-            });
-            els.itemName.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') els.itemPrice.focus();
-            });
+            els.itemPrice.addEventListener('keypress', (e) => { if(e.key === 'Enter') addItem(); });
+            els.itemName.addEventListener('keypress', (e) => { if(e.key === 'Enter') els.itemPrice.focus(); });
         }
 
-        function calculateRealWage() {
-            const salary = parseFloat(els.salary.value) || 0;
-            const hours = parseFloat(els.hoursPerDay.value) || 0;
-            const days = parseFloat(els.daysPerWeek.value) || 0;
-            const commute = parseFloat(els.commute.value) || 0;
+        function calculateLogic() {
+            state.salary = parseFloat(els.salary.value) || 0;
+            state.hoursPerDay = parseFloat(els.hours.value) || 0;
+            state.daysPerWeek = parseFloat(els.days.value) || 0;
+            state.commuteMinutes = parseInt(els.commuteRange.value) || 0;
 
-            if (salary > 0 && hours > 0 && days > 0) {
-                const weeksPerMonth = 4.33; 
+            if (state.salary > 0 && state.hoursPerDay > 0) {
+                const WEEKS_MONTH = 4.33;
+                const monthlyDays = state.daysPerWeek * WEEKS_MONTH;
+                const nominalHours = monthlyDays * state.hoursPerDay;
+                const nominalRate = state.salary / nominalHours;
                 
-                // Real Calculation
-                const dailyCommuteHours = commute / 60;
-                const totalDailyHours = hours + dailyCommuteHours;
-                const realMonthlyHours = totalDailyHours * days * weeksPerMonth;
-                const realRate = salary / realMonthlyHours;
-                const nominalRate = salary / (hours * days * weeksPerMonth);
+                const dailyCommuteHours = state.commuteMinutes / 60;
+                const totalDailyHours = state.hoursPerDay + dailyCommuteHours;
+                state.monthlyWorkHours = monthlyDays * totalDailyHours;
+                state.realHourlyRate = state.salary / state.monthlyWorkHours;
 
-                state.salary = salary;
-                state.hoursPerDay = hours;
-                state.daysPerWeek = days;
-                state.commuteMinutes = commute;
-                state.realHourlyRate = realRate;
-                state.monthlyWorkHours = realMonthlyHours;
-
-                els.wageResult.classList.remove('hidden');
-                els.nominalDisplay.innerText = formatCurrency(nominalRate);
-                els.realDisplay.innerText = formatCurrency(realRate);
+                els.nominalRate.innerText = formatCurrency(nominalRate) + "/h";
+                els.realRate.innerText = formatCurrency(state.realHourlyRate);
                 
-                const drop = ((nominalRate - realRate) / nominalRate) * 100;
+                const drop = ((nominalRate - state.realHourlyRate) / nominalRate) * 100;
                 els.commuteImpact.innerHTML = drop > 0 
-                    ? `<span class="text-red-500 font-bold">-${drop.toFixed(1)}%</span> devido ao deslocamento`
+                    ? `<span class="text-red-500 font-bold">-${drop.toFixed(1)}%</span> perdido no trânsito`
                     : `<span class="text-emerald-600 font-bold">Eficiência máxima</span>`;
 
-                els.converterSection.classList.remove('opacity-50', 'pointer-events-none');
-                renderItems();
+                els.resultCard.classList.remove('hidden');
+                els.shopSection.classList.remove('opacity-50', 'pointer-events-none');
+                renderCart();
 
             } else {
-                els.wageResult.classList.add('hidden');
-                els.converterSection.classList.add('opacity-50', 'pointer-events-none');
+                els.resultCard.classList.add('hidden');
+                els.shopSection.classList.add('opacity-50', 'pointer-events-none');
             }
-        }
-
-        function calculateCompoundInterest(principal) {
-            // Assume 10% annual return for 10 years (avg stock market)
-            const rate = 0.10;
-            const years = 10;
-            const amount = principal * Math.pow((1 + rate), years);
-            return amount;
         }
 
         function addItem() {
@@ -473,106 +451,83 @@
             if (!name || isNaN(price) || price <= 0) return;
 
             const hoursCost = price / state.realHourlyRate;
-            
-            // Context Logic
-            const sortedComparisons = [...comparisons].sort((a, b) => {
-                return Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost);
-            });
-            const closest = sortedComparisons[0];
-            const context = `Custa o mesmo tempo que <strong>${closest.text}</strong>.`;
+            const sortedComparisons = [...comparisons].sort((a, b) => Math.abs(a.hours - hoursCost) - Math.abs(b.hours - hoursCost));
+            const context = `~ ${sortedComparisons[0].text}`;
 
             if (editingId) {
-                // UPDATE ITEM
                 const index = state.items.findIndex(i => i.id === editingId);
-                if (index !== -1) {
-                    state.items[index] = { ...state.items[index], name, price, category, context };
-                }
-                
-                // Reset Edit Mode
-                editingId = null;
-                document.getElementById('mainBtnText').innerText = "Calcular Custo";
-                document.getElementById('mainBtnIcon').innerHTML = '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>';
-                const container = document.getElementById('inputContainer');
-                container.classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-                
+                if (index !== -1) state.items[index] = { ...state.items[index], name, price, category, context };
+                resetEditMode();
             } else {
-                // ADD ITEM
-                state.items.push({
-                    id: Date.now(),
-                    name,
-                    price,
-                    category,
-                    context
-                });
+                state.items.push({ id: Date.now(), name, price, category, context });
             }
 
-            playSound('add');
             els.itemName.value = '';
             els.itemPrice.value = '';
             els.itemName.focus();
             
+            playSound('add');
             saveState();
-            renderItems();
+            renderCart();
         }
 
-        function startEdit(id) {
+        function editItem(id) {
             const item = state.items.find(i => i.id === id);
             if (!item) return;
 
             editingId = id;
-            
-            // Populate Fields
             els.itemName.value = item.name;
             els.itemPrice.value = item.price;
-            if (item.category === 'desire') document.getElementById('cat-desire').checked = true;
-            else document.getElementById('cat-need').checked = true;
+            document.getElementById(item.category === 'desire' ? 'cat-desire' : 'cat-need').checked = true;
 
-            // Change UI to Edit Mode
-            document.getElementById('mainBtnText').innerText = "Salvar Alterações";
-            document.getElementById('mainBtnIcon').innerHTML = '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>'; // Edit Icon
+            const btn = document.getElementById('mainActionBtn');
+            btn.classList.replace('bg-slate-900', 'bg-indigo-600');
+            btn.classList.replace('hover:bg-slate-800', 'hover:bg-indigo-500');
+            document.getElementById('btnText').innerText = "Salvar";
+            document.getElementById('btnIcon').innerHTML = "✎";
             
-            // Highlight container
-            const container = document.getElementById('inputContainer');
-            container.classList.add('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-
-            // Scroll to inputs
+            document.getElementById('inputContainer').classList.add('ring-2', 'ring-indigo-100');
             els.itemName.focus();
-            window.scrollTo({ top: container.offsetTop - 20, behavior: 'smooth' });
         }
 
-        function deleteItem(id) {
+        function resetEditMode() {
+            editingId = null;
+            const btn = document.getElementById('mainActionBtn');
+            btn.classList.replace('bg-indigo-600', 'bg-slate-900');
+            btn.classList.replace('hover:bg-indigo-500', 'hover:bg-slate-800');
+            document.getElementById('btnText').innerText = "Adicionar";
+            document.getElementById('btnIcon').innerHTML = "+";
+            document.getElementById('inputContainer').classList.remove('ring-2', 'ring-indigo-100');
+        }
+
+        function removeItem(id) {
+            state.items = state.items.filter(i => i.id !== id);
+            if (editingId === id) resetEditMode();
             playSound('delete');
-            state.items = state.items.filter(item => item.id !== id);
-            
-            // If deleting the item currently being edited, reset edit mode
-            if (editingId === id) {
-                 editingId = null;
-                 document.getElementById('mainBtnText').innerText = "Calcular Custo";
-                 document.getElementById('mainBtnIcon').innerHTML = '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>';
-                 els.itemName.value = '';
-                 els.itemPrice.value = '';
-                 document.getElementById('inputContainer').classList.remove('ring-2', 'ring-indigo-500', 'bg-indigo-50');
-            }
-
             saveState();
-            renderItems();
+            renderCart();
         }
 
-        function renderItems() {
-            els.itemsList.innerHTML = '';
-            let totalHoursCost = 0;
-            let totalCostMoney = 0;
+        function calculateCompoundInterest(principal) {
+            return principal * Math.pow(1.10, 10);
+        }
 
-            if (state.items.length === 0) {
-                els.emptyState.classList.remove('hidden');
-                els.totalContainer.classList.add('hidden');
-                updateBattery(0);
-                renderCalendar([], 0);
-                return;
+        function renderCart() {
+            els.itemsList.innerHTML = '';
+            
+            if(state.items.length === 0) {
+                 els.emptyState.classList.remove('hidden');
+                 els.totalContainer.classList.add('hidden');
+                 updateBattery(0);
+                 renderCalendar([], state.salary);
+                 return;
             }
 
             els.emptyState.classList.add('hidden');
             els.totalContainer.classList.remove('hidden');
+
+            let totalMoney = 0;
+            let totalHours = 0;
 
             const sortedItems = [...state.items].sort((a, b) => {
                 if (a.category === b.category) return b.price - a.price;
@@ -580,84 +535,67 @@
             });
 
             sortedItems.forEach(item => {
-                totalCostMoney += item.price;
+                totalMoney += item.price;
                 const hoursCost = item.price / state.realHourlyRate;
-                totalHoursCost += hoursCost;
+                totalHours += hoursCost;
                 
-                const percentOfLife = Math.min((hoursCost / state.monthlyWorkHours) * 100, 100);
+                const percent = Math.min((hoursCost / state.monthlyWorkHours) * 100, 100);
                 const isNeed = item.category === 'need';
                 
-                const borderColor = isNeed ? 'border-cyan-200' : 'border-fuchsia-200';
-                const textColor = isNeed ? 'text-cyan-700' : 'text-fuchsia-700';
+                // Colors based on category
+                const borderColor = isNeed ? 'border-cyan-100' : 'border-fuchsia-100';
                 const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
                 const badgeText = isNeed ? 'Necessidade' : 'Desejo';
-                const badgeBg = isNeed ? 'bg-cyan-50' : 'bg-fuchsia-50';
+                const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
 
-                // --- Investment Projection Logic ---
-                let investmentHTML = '';
-                if (item.price > 200) {
-                    const futureVal = calculateCompoundInterest(item.price);
-                    investmentHTML = `
-                        <div class="mt-3 pt-3 border-t border-slate-100 flex items-start gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
-                            <span class="text-gold text-lg">📈</span>
-                            <div>
-                                <p class="text-[10px] text-slate-400 uppercase tracking-wide font-bold">Máquina do Tempo</p>
-                                <p class="text-xs text-slate-600">Se investido (10% a.a), isso valeria <span class="text-gold font-bold">${formatCurrency(futureVal)}</span> em 10 anos.</p>
-                            </div>
-                        </div>
-                    `;
+                let investHtml = '';
+                if(item.price > 200) {
+                    const future = calculateCompoundInterest(item.price);
+                    investHtml = `<div class="mt-3 text-[10px] text-amber-600 bg-amber-50 p-2 rounded flex gap-2 items-center">
+                        <span>📈</span> Se investido (10 anos): <strong>${formatCurrency(future)}</strong>
+                    </div>`;
                 }
 
-                const card = document.createElement('div');
-                card.className = `group bg-white border ${borderColor} p-5 rounded-2xl transition-all duration-300 animate-slide-up hover:shadow-md relative overflow-hidden`;
-                card.innerHTML = `
-                    <div class="flex justify-between items-start mb-3 relative z-10">
+                const el = document.createElement('div');
+                el.className = `bg-white p-4 rounded-xl border ${borderColor} shadow-sm hover:shadow-md transition-all group relative`;
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded ${badgeBg} ${textColor}">${badgeText}</span>
-                            </div>
-                            <h3 class="font-bold text-slate-800 text-lg tracking-tight">${item.name}</h3>
-                            <p class="text-slate-500 text-xs font-mono mt-0.5">${formatCurrency(item.price)}</p>
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1 ${badgeClass}">${badgeText}</span>
+                            <span class="font-bold text-slate-800 block text-base">${item.name}</span>
+                            <span class="text-xs text-slate-500 font-mono">${formatCurrency(item.price)}</span>
                         </div>
                         <div class="text-right">
-                            <span class="block text-xl font-bold text-slate-900 tracking-tight">${formatTime(hoursCost)}</span>
-                            <span class="text-[10px] text-slate-500 block">de vida</span>
+                            <span class="block text-slate-900 font-bold text-lg">${formatTime(hoursCost)}</span>
+                            <span class="text-[10px] text-slate-400">de vida</span>
                         </div>
                     </div>
                     
-                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden relative mb-2">
-                        <div class="${barColor} h-full rounded-full" style="width: ${percentOfLife}%"></div>
+                    <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden mb-2">
+                        <div class="${barColor} h-full" style="width: ${percent}%"></div>
                     </div>
                     
-                    <div class="flex justify-between items-end mt-3 bg-slate-50 p-2 rounded-lg">
-                        <p class="text-xs text-slate-500 flex items-center gap-2">
-                            <span class="text-yellow-500 text-sm">💡</span> 
-                            <span>${item.context}</span>
-                        </p>
-                        <div class="flex gap-2">
-                            <button onclick="startEdit(${item.id})" class="text-[10px] text-indigo-600 hover:text-indigo-800 uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-all">
-                                Editar
-                            </button>
-                            <button onclick="deleteItem(${item.id})" class="text-[10px] text-red-500/60 hover:text-red-500 uppercase tracking-wider font-bold opacity-0 group-hover:opacity-100 transition-all">
-                                Remover
-                            </button>
-                        </div>
+                    <div class="flex justify-between items-center text-[10px] text-slate-500">
+                        <span>💡 ${item.context}</span>
                     </div>
 
-                    ${investmentHTML}
+                    ${investHtml}
+
+                    <div class="absolute top-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <button onclick="editItem(${item.id})" class="text-[10px] text-indigo-600 hover:bg-indigo-50 px-2 py-1 rounded font-bold uppercase">Editar</button>
+                         <button onclick="removeItem(${item.id})" class="text-[10px] text-red-500 hover:bg-red-50 px-2 py-1 rounded font-bold uppercase">X</button>
+                    </div>
                 `;
-                els.itemsList.appendChild(card);
+                els.itemsList.appendChild(el);
             });
 
-            els.totalTime.innerText = formatTime(totalHoursCost);
-            const workDayLength = state.hoursPerDay + (state.commuteMinutes / 60);
-            const totalDays = totalHoursCost / workDayLength;
-            els.totalDays.innerHTML = `Equivale a <strong class="text-slate-900">${totalDays.toFixed(1)} dias</strong> inteiros de rotina.`;
+            els.totalTime.innerText = formatTime(totalHours);
+            const days = totalHours / (state.hoursPerDay + (state.commuteMinutes/60));
+            els.totalDays.innerText = `${days.toFixed(1)} dias de trabalho`;
 
-            const totalMonthlyIncome = state.salary; 
-            const percentageConsumed = (totalCostMoney / totalMonthlyIncome) * 100;
+            const percentageConsumed = (totalMoney / state.salary) * 100;
             updateBattery(percentageConsumed);
-            renderCalendar(sortedItems, totalMonthlyIncome);
+            renderCalendar(state.items, state.salary);
         }
 
         function updateBattery(percent) {
@@ -673,15 +611,15 @@
             if (p < 30) {
                 bar.classList.add('bg-gradient-to-r', 'from-emerald-400', 'to-emerald-500');
                 status.innerText = "Nível: Sustentável";
-                status.className = "text-xs text-right mt-2 font-mono text-emerald-600 font-medium";
+                status.className = "text-[10px] text-right mt-1 font-medium text-emerald-600";
             } else if (p < 60) {
                 bar.classList.add('bg-gradient-to-r', 'from-yellow-400', 'to-orange-500');
                 status.innerText = "Nível: Atenção";
-                status.className = "text-xs text-right mt-2 font-mono text-yellow-600 font-medium";
+                status.className = "text-[10px] text-right mt-1 font-medium text-amber-600";
             } else {
-                bar.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600', 'animate-pulse');
+                bar.classList.add('bg-gradient-to-r', 'from-red-500', 'to-red-600');
                 status.innerText = "Nível: Crítico";
-                status.className = "text-xs text-right mt-2 font-mono text-red-600 font-bold";
+                status.className = "text-[10px] text-right mt-1 font-medium text-red-600 font-bold";
             }
         }
 
@@ -690,98 +628,74 @@
             const totalDays = 30;
             const dayValue = totalSalary / totalDays;
             
-            let needCost = items.filter(i => i.category === 'need').reduce((sum, i) => sum + i.price, 0);
-            let desireCost = items.filter(i => i.category === 'desire').reduce((sum, i) => sum + i.price, 0);
+            const needCost = items.filter(i => i.category === 'need').reduce((s, i) => s + i.price, 0);
+            const desireCost = items.filter(i => i.category === 'desire').reduce((s, i) => s + i.price, 0);
             
-            const daysNeeds = Math.ceil(needCost / dayValue);
-            const daysDesires = Math.ceil(desireCost / dayValue);
+            const dNeed = Math.ceil(needCost / dayValue);
+            const dDesire = Math.ceil(desireCost / dayValue);
+            const totalUsed = Math.min(dNeed + dDesire, 30);
             
-            const totalConsumedDays = Math.min(daysNeeds + daysDesires, 30);
-            const freedomDay = totalConsumedDays < 30 ? totalConsumedDays + 1 : "Nunca";
-
-            if (totalConsumedDays === 0) {
+            const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
+            if (totalUsed === 0) {
                 els.freedomDayLabel.innerHTML = "Você é livre dia <strong class='text-emerald-600'>01</strong>";
-            } else if (totalConsumedDays >= 30) {
+            } else if (totalUsed >= 30) {
                 els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
             } else {
-                els.freedomDayLabel.innerHTML = `Você é livre dia <strong class='text-emerald-600'>${String(freedomDay).padStart(2, '0')}</strong>`;
+                els.freedomDayLabel.innerHTML = `Livre dia <strong class='text-emerald-600'>${String(freeDay).padStart(2, '0')}</strong>`;
             }
 
-            for (let i = 1; i <= totalDays; i++) {
-                const dayDiv = document.createElement('div');
-                dayDiv.className = 'day-cell h-6 w-full rounded-sm text-[8px] flex items-center justify-center font-bold relative group cursor-default';
+            for(let i=1; i<=30; i++) {
+                const day = document.createElement('div');
+                day.className = 'h-2 w-full rounded-sm text-[0px] flex items-center justify-center day-cell';
                 
-                if (i <= daysNeeds) {
-                    dayDiv.classList.add('bg-cyan-500', 'text-white');
-                    dayDiv.title = `Dia ${i}: Trabalhando para pagar Necessidades`;
-                } else if (i <= daysNeeds + daysDesires) {
-                    dayDiv.classList.add('bg-fuchsia-500', 'text-white');
-                    dayDiv.title = `Dia ${i}: Trabalhando para pagar Desejos`;
+                if (i <= dNeed) {
+                    day.classList.add('bg-cyan-500');
+                    day.title = `Dia ${i}: Necessidades`;
+                } else if (i <= dNeed + dDesire) {
+                    day.classList.add('bg-fuchsia-500');
+                    day.title = `Dia ${i}: Desejos`;
                 } else {
-                    dayDiv.classList.add('bg-emerald-50', 'text-emerald-400', 'border', 'border-emerald-100');
-                    dayDiv.title = `Dia ${i}: Dinheiro Livre`;
+                    day.classList.add('bg-emerald-100', 'border', 'border-emerald-200');
+                    day.title = `Dia ${i}: Livre`;
                 }
-                
-                dayDiv.innerText = i;
-                els.calendarGrid.appendChild(dayDiv);
+                els.calendarGrid.appendChild(day);
             }
         }
 
-        // --- Share Functionality ---
+        function formatCurrency(v) { return new Intl.NumberFormat('pt-BR', {style:'currency', currency:'BRL'}).format(v); }
+        
+        function formatTime(decimal) {
+            const h = Math.floor(decimal);
+            const m = Math.round((decimal - h) * 60);
+            if(h===0) return `${m}m`;
+            return `${h}h${m}m`;
+        }
+
         function shareResults() {
-            if (state.items.length === 0) {
-                alert("Adicione itens para compartilhar seu resultado!");
-                return;
-            }
-
-            const totalTime = document.getElementById('totalLifeTime').innerText;
-            const text = `💰 Descobri que meu Salário Real é ${formatCurrency(state.realHourlyRate)}/hora.\n\nMinha lista de desejos custa:\n⏳ ${totalTime} de vida.\n\nCalcule o seu valor real em "Quanto Custa Sua Vida?".`;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                const btn = document.querySelector('button[onclick="shareResults()"]');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = `<span class="text-emerald-600 flex items-center gap-2">Copiado! <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>`;
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                }, 2000);
-            });
-        }
-
-        // --- Helpers & Persistence ---
-        function formatCurrency(val) {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(val);
-        }
-
-        function formatTime(decimalHours) {
-            const hrs = Math.floor(decimalHours);
-            const mins = Math.round((decimalHours - hrs) * 60);
-            if (hrs > 0) return `${hrs}h ${mins}m`;
-            return `${mins}m`;
-        }
-
-        function toggleDetails() {
-            document.getElementById('calcDetails').classList.toggle('hidden');
+             const txt = `Meu Valor Hora Real é ${els.realRate.innerText}. Minha lista custa ${els.totalTime.innerText} de vida.`;
+             navigator.clipboard.writeText(txt);
+             alert("Relatório copiado!");
         }
 
         function saveState() {
-            localStorage.setItem('lifeCostState_v5', JSON.stringify({
+            localStorage.setItem('lifeCostState_light', JSON.stringify({
                 salary: els.salary.value,
-                hoursPerDay: els.hoursPerDay.value,
-                daysPerWeek: els.daysPerWeek.value,
-                commuteMinutes: els.commute.value,
+                hours: els.hours.value,
+                days: els.days.value,
+                commute: els.commuteRange.value,
                 items: state.items
             }));
         }
 
         function loadState() {
-            let saved = localStorage.getItem('lifeCostState_v5') || localStorage.getItem('lifeCostState_v4');
-            if (saved) {
-                const data = JSON.parse(saved);
-                if(data.salary) els.salary.value = data.salary;
-                if(data.hoursPerDay) els.hoursPerDay.value = data.hoursPerDay;
-                if(data.daysPerWeek) els.daysPerWeek.value = data.daysPerWeek;
-                if(data.commuteMinutes) els.commute.value = data.commuteMinutes;
-                if(data.items) state.items = data.items;
+            const saved = localStorage.getItem('lifeCostState_light') || localStorage.getItem('lifeCostState_neon') || localStorage.getItem('lifeCostState_v5');
+            if(saved) {
+                const d = JSON.parse(saved);
+                if(d.salary) els.salary.value = d.salary;
+                if(d.hours) els.hours.value = d.hours;
+                if(d.days) els.days.value = d.days;
+                if(d.commute) { els.commuteRange.value = d.commute; els.commuteLabel.innerText = `${d.commute} min`; }
+                if(d.items) state.items = d.items;
             }
         }
     </script>
