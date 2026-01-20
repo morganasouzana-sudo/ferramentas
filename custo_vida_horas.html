@@ -433,7 +433,7 @@
             loadState();
             addListeners();
             calculateLogic();
-            // Important: Do NOT call renderCalendar here manually to allow renderCart to handle correct state logic
+            // Important: Do NOT call renderCalendar here manually. Logic handles it.
         });
 
         function addListeners() {
@@ -497,8 +497,6 @@
 
             if (!name || isNaN(price) || price <= 0) return;
 
-            // Note: We don't store static context anymore, we recalculate it in renderCart
-            // But we keep it in state object structure for consistency if needed
             const hoursCost = price / state.realHourlyRate;
             const context = getComparisonContext(hoursCost);
 
