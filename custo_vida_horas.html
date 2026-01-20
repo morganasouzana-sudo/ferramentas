@@ -438,17 +438,21 @@
             els.barFixed.style.width = `${fP}%`; els.barVariable.style.width = `${vP}%`;
             els.textFixed.innerText = `Fixos: ${fP.toFixed(0)}%`; els.textVariable.innerText = `Var: ${vP.toFixed(0)}%`;
 
-            // SYNC: We pass the calculated work days to the calendar renderer
-            // We use 'workDaysNeeded' because that is what the user sees in the text ("6 dias de trabalho")
-            renderCalendar(workDaysNeeded);
+            renderCalendar(money, fixed, variable);
         }
 
-        function renderCalendar(workDaysNeeded) {
+        function renderCalendar(totalMoney, fixedMoney, variableMoney) {
             els.calendarGrid.innerHTML = '';
             
-            // Map work days to squares. 
-            // We cap at 30 to show "Full Month" visually, but if it exceeds ~22 it's basically >100% of working time.
-            const totalUsed = Math.min(Math.ceil(workDaysNeeded), 30);
+            // Calculate ratio based on MONEY vs SALARY.
+            // If money >= salary, ratio >= 1 (full calendar).
+            const totalRatio = Math.min(totalMoney / state.salary, 1);
+            const totalUsed = Math.ceil(totalRatio * 30);
+            
+            // Calculate portion for Fixed vs Variable within the used cells
+            const fixedRatio = totalMoney > 0 ? (fixedMoney / totalMoney) : 0;
+            const fixedDays = Math.ceil(totalUsed * fixedRatio);
+
             const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
 
             if(totalUsed === 0) els.freedomDayLabel.innerHTML = "Livre: Dia 01";
@@ -458,10 +462,6 @@
             for(let i=1; i<=30; i++) {
                 const day = document.createElement('div');
                 day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center cursor-default transition-all border';
-                
-                // Determine color based on ratio of Fixed vs Variable
-                const fixedRatio = parseFloat(els.textFixed.innerText.replace(/\D/g,'')) / 100 || 0;
-                const fixedDays = Math.ceil(totalUsed * fixedRatio);
                 
                 if (i <= totalUsed) {
                     if (i <= fixedDays) {
