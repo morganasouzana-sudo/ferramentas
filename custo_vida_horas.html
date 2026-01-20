@@ -213,27 +213,29 @@
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                         <div class="flex gap-2 w-full md:w-auto">
                             <div class="flex-1">
-                                <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio" checked>
-                                <label for="cat-desire" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-xs font-bold text-fuchsia-600 hover:bg-fuchsia-50 transition-all w-full md:w-auto">
-                                    <span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> DESEJO
+                                <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio" checked>
+                                <label for="cat-need" class="flex flex-col items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded-lg border border-transparent hover:bg-cyan-50 transition-all w-full md:w-auto h-full">
+                                    <span class="text-xs font-bold text-cyan-700">FIXO</span>
+                                    <span class="text-[10px] text-cyan-500 uppercase tracking-wide">Necessidade</span>
                                 </label>
                             </div>
                             <div class="flex-1">
-                                <input type="radio" name="category" id="cat-need" value="need" class="hidden category-radio">
-                                <label for="cat-need" class="flex items-center justify-center gap-2 cursor-pointer px-4 py-2 rounded-lg border border-transparent text-xs font-bold text-cyan-600 hover:bg-cyan-50 transition-all w-full md:w-auto">
-                                    <span class="w-2 h-2 rounded-full bg-cyan-500"></span> NECESSIDADE
+                                <input type="radio" name="category" id="cat-desire" value="desire" class="hidden category-radio">
+                                <label for="cat-desire" class="flex flex-col items-center justify-center gap-1 cursor-pointer px-4 py-2 rounded-lg border border-transparent hover:bg-fuchsia-50 transition-all w-full md:w-auto h-full">
+                                    <span class="text-xs font-bold text-fuchsia-700">VARIÁVEL</span>
+                                    <span class="text-[10px] text-fuchsia-500 uppercase tracking-wide">Desejo</span>
                                 </label>
                             </div>
                         </div>
                         
-                        <button onclick="addItem()" id="mainActionBtn" class="w-full md:w-auto bg-slate-900 text-white hover:bg-slate-800 font-bold px-6 py-2.5 rounded-lg transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 text-sm">
+                        <button onclick="addItem()" id="mainActionBtn" class="w-full md:w-auto bg-slate-900 text-white hover:bg-slate-800 font-bold px-6 py-3 rounded-lg transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2 text-sm h-14 md:h-auto">
                             <span id="btnIcon">+</span> <span id="btnText">Adicionar</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Lista (Separada por Categorias) -->
-                <div class="flex-grow space-y-6 max-h-[500px] overflow-y-auto pr-1 mb-8" id="itemsList">
+                <!-- Lista (Grid de 2 Colunas para Cards Menores) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-1 mb-8 content-start" id="itemsList">
                     <!-- Items JS: Necessidades primeiro, depois Desejos -->
                 </div>
 
@@ -242,28 +244,46 @@
                     <p class="text-slate-400 text-sm">Sua lista está vazia.</p>
                 </div>
 
-                <!-- DASHBOARD DE IMPACTO (Movido para baixo e Aumentado) -->
+                <!-- DASHBOARD DE IMPACTO -->
                 <div class="mt-auto border-t border-slate-200 pt-8">
                     <h3 class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-6 text-center">Impacto na sua Realidade</h3>
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         
-                        <!-- Bateria (Maior destaque) -->
-                        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                            <div class="flex justify-between items-end mb-3">
-                                <div>
-                                    <span class="text-sm font-extrabold text-slate-600 uppercase block">Energia Vendida</span>
-                                    <span class="text-xs text-slate-400">Quanto do mês já se foi</span>
+                        <!-- Bateria e Balanço -->
+                        <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+                            <div>
+                                <div class="flex justify-between items-end mb-3">
+                                    <div>
+                                        <span class="text-sm font-extrabold text-slate-600 uppercase block">Energia Vendida</span>
+                                        <span class="text-xs text-slate-400">Comprometimento Mensal</span>
+                                    </div>
+                                    <span id="batteryPercent" class="text-3xl font-black text-slate-900">0%</span>
                                 </div>
-                                <span id="batteryPercent" class="text-3xl font-black text-slate-900">0%</span>
+                                <div class="w-full h-5 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200 mb-2">
+                                    <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000"></div>
+                                </div>
+                                <p id="batteryStatus" class="text-xs text-right font-bold text-emerald-600 mb-6">Nível: Seguro</p>
                             </div>
-                            <div class="w-full h-5 bg-slate-100 rounded-full overflow-hidden relative border border-slate-200 mb-2">
-                                <div id="batteryBar" class="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 w-0 transition-all duration-1000"></div>
+
+                            <!-- Balanço Fixo vs Variável -->
+                            <div>
+                                <div class="flex justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
+                                    <span>Fixo</span>
+                                    <span>Variável</span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden flex">
+                                    <div id="barFixed" class="h-full bg-cyan-500 transition-all duration-500" style="width: 0%"></div>
+                                    <div id="barVariable" class="h-full bg-fuchsia-500 transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                                <div class="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                                    <span id="textFixed">0%</span>
+                                    <span id="textVariable">0%</span>
+                                </div>
                             </div>
-                            <p id="batteryStatus" class="text-xs text-right font-bold text-emerald-600">Nível: Seguro</p>
                         </div>
 
-                        <!-- Calendário (Maior destaque) -->
+                        <!-- Calendário -->
                         <div class="p-6 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
                             <div class="flex justify-between items-center mb-4">
                                 <div>
@@ -273,11 +293,11 @@
                                 <span id="freedomDayLabel" class="text-xs bg-slate-100 px-3 py-1 rounded-full text-slate-700 font-bold border border-slate-200">Dia 01</span>
                             </div>
                             <div class="grid grid-cols-7 gap-2" id="calendarGrid">
-                                <!-- JS Injected - Cells will be bigger -->
+                                <!-- JS Injected -->
                             </div>
                             <div class="flex gap-3 mt-3 text-[10px] text-slate-400 uppercase font-bold justify-center">
-                                <span class="text-essential flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> Nec</span>
-                                <span class="text-desire flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Des</span>
+                                <span class="text-essential flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-cyan-500"></span> Fixo</span>
+                                <span class="text-desire flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-fuchsia-500"></span> Var</span>
                                 <span class="text-freedom flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-100 border border-emerald-300"></span> Liv</span>
                             </div>
                         </div>
@@ -402,14 +422,18 @@
             batteryPercent: document.getElementById('batteryPercent'),
             batteryStatus: document.getElementById('batteryStatus'),
             calendarGrid: document.getElementById('calendarGrid'),
-            freedomDayLabel: document.getElementById('freedomDayLabel')
+            freedomDayLabel: document.getElementById('freedomDayLabel'),
+            barFixed: document.getElementById('barFixed'),
+            barVariable: document.getElementById('barVariable'),
+            textFixed: document.getElementById('textFixed'),
+            textVariable: document.getElementById('textVariable')
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             addListeners();
             calculateLogic();
-            renderCalendar([], 0);
+            // REMOVED explicit empty renderCalendar here to prevent clearing on refresh
         });
 
         function addListeners() {
@@ -545,82 +569,81 @@
 
             let totalMoney = 0;
             let totalHours = 0;
+            
+            // Calculate ratios for Fixed vs Variable
+            let fixedTotal = 0;
+            let variableTotal = 0;
 
-            const needs = state.items.filter(i => i.category === 'need');
-            const desires = state.items.filter(i => i.category === 'desire');
+            const sortedItems = [...state.items].sort((a, b) => {
+                // Keep categories separate but chronological within category? 
+                // Or just standard sort. Let's just sort by needs first.
+                if (a.category === b.category) return b.price - a.price;
+                return a.category === 'need' ? -1 : 1;
+            });
 
-            const renderGroup = (groupItems, title, titleColor) => {
-                if(groupItems.length === 0) return;
+            sortedItems.forEach(item => {
+                totalMoney += item.price;
+                const hoursCost = item.price / state.realHourlyRate;
+                totalHours += hoursCost;
                 
-                const header = document.createElement('h3');
-                header.className = `text-xs font-bold uppercase tracking-widest ${titleColor} mb-3 mt-4 px-1`;
-                header.innerText = title;
-                els.itemsList.appendChild(header);
+                if (item.category === 'need') fixedTotal += item.price;
+                else variableTotal += item.price;
+                
+                const percent = Math.min((hoursCost / state.monthlyWorkHours) * 100, 100);
+                const isNeed = item.category === 'need';
+                
+                const borderColor = isNeed ? 'border-cyan-100' : 'border-fuchsia-100';
+                const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
+                const badgeText = isNeed ? 'FIXO' : 'VARIÁVEL';
+                const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
 
-                groupItems.forEach(item => {
-                    totalMoney += item.price;
-                    const hoursCost = item.price / state.realHourlyRate;
-                    totalHours += hoursCost;
+                let investHtml = '';
+                if(item.price > 200) {
+                    const future = calculateCompoundInterest(item.price);
+                    investHtml = `<div class="mt-3 text-xs text-amber-800 bg-amber-100 p-2.5 rounded-lg border border-amber-200 shadow-sm flex gap-2 items-center">
+                        <span class="text-base">📈</span> 
+                        <span>Se investido (10 anos): <strong class="text-amber-900 text-sm">${formatCurrency(future)}</strong></span>
+                    </div>`;
+                }
+
+                const el = document.createElement('div');
+                el.className = `bg-white p-4 rounded-xl border ${borderColor} shadow-sm hover:shadow-md transition-all group relative`;
+                el.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <div>
+                            <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1 ${badgeClass}">${badgeText}</span>
+                            <span class="font-bold text-slate-800 block text-base leading-tight">${item.name}</span>
+                            <span class="text-xs text-slate-500 font-mono">${formatCurrency(item.price)}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-slate-900 font-bold text-lg">${formatTime(hoursCost)}</span>
+                            <span class="text-[10px] text-slate-400">de vida</span>
+                        </div>
+                    </div>
                     
-                    const percent = Math.min((hoursCost / state.monthlyWorkHours) * 100, 100);
-                    const isNeed = item.category === 'need';
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
+                        <div class="${barColor} h-full" style="width: ${percent}%"></div>
+                    </div>
                     
-                    const borderColor = isNeed ? 'border-cyan-100' : 'border-fuchsia-100';
-                    const barColor = isNeed ? 'bg-cyan-500' : 'bg-fuchsia-500';
-                    const badgeText = isNeed ? 'Necessidade' : 'Desejo';
-                    const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
+                    <div class="flex justify-between items-center text-[10px] text-slate-500">
+                        <span>💡 ${item.context}</span>
+                    </div>
 
-                    let investHtml = '';
-                    if(item.price > 200) {
-                        const future = calculateCompoundInterest(item.price);
-                        investHtml = `<div class="mt-3 text-xs text-amber-800 bg-amber-100 p-2.5 rounded-lg border border-amber-200 shadow-sm flex gap-2 items-center">
-                            <span class="text-base">📈</span> 
-                            <span>Se investido (10 anos): <strong class="text-amber-900 text-sm">${formatCurrency(future)}</strong></span>
-                        </div>`;
-                    }
+                    ${investHtml}
 
-                    const el = document.createElement('div');
-                    el.className = `bg-white p-4 rounded-xl border ${borderColor} shadow-sm hover:shadow-md transition-all group relative`;
-                    el.innerHTML = `
-                        <div class="flex justify-between items-start mb-3">
-                            <div>
-                                <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mb-1 ${badgeClass}">${badgeText}</span>
-                                <span class="font-bold text-slate-800 block text-base">${item.name}</span>
-                                <span class="text-xs text-slate-500 font-mono">${formatCurrency(item.price)}</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="block text-slate-900 font-bold text-lg">${formatTime(hoursCost)}</span>
-                                <span class="text-[10px] text-slate-400">de vida</span>
-                            </div>
-                        </div>
-                        
-                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden mb-2">
-                            <div class="${barColor} h-full" style="width: ${percent}%"></div>
-                        </div>
-                        
-                        <div class="flex justify-between items-center text-[10px] text-slate-500">
-                            <span>💡 ${item.context}</span>
-                        </div>
-
-                        ${investHtml}
-
-                        <div class="flex justify-end gap-2 mt-4 pt-3 border-t border-slate-50">
-                             <button onclick="editItem(${item.id})" class="text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded transition-colors flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
-                                Editar
-                             </button>
-                             <button onclick="removeItem(${item.id})" class="text-xs font-bold text-red-600 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded transition-colors flex items-center gap-1">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
-                                Excluir
-                             </button>
-                        </div>
-                    `;
-                    els.itemsList.appendChild(el);
-                });
-            }
-
-            renderGroup(needs, 'Necessidades', 'text-cyan-600');
-            renderGroup(desires, 'Desejos', 'text-fuchsia-600');
+                    <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-slate-50">
+                         <button onclick="editItem(${item.id})" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                            Editar
+                         </button>
+                         <button onclick="removeItem(${item.id})" class="text-xs font-bold text-red-500 hover:text-red-700 transition-colors flex items-center gap-1 p-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                            Excluir
+                         </button>
+                    </div>
+                `;
+                els.itemsList.appendChild(el);
+            });
 
             els.totalTime.innerText = formatTime(totalHours);
             const days = totalHours / (state.hoursPerDay + (state.commuteMinutes/60));
@@ -628,6 +651,16 @@
 
             const percentageConsumed = (totalMoney / state.salary) * 100;
             updateBattery(percentageConsumed);
+            
+            // Update Fixed vs Variable Bar
+            const fixedPercent = totalMoney > 0 ? (fixedTotal / totalMoney) * 100 : 0;
+            const varPercent = totalMoney > 0 ? (variableTotal / totalMoney) * 100 : 0;
+            
+            els.barFixed.style.width = `${fixedPercent}%`;
+            els.barVariable.style.width = `${varPercent}%`;
+            els.textFixed.innerText = `Fixos: ${fixedPercent.toFixed(0)}%`;
+            els.textVariable.innerText = `Var: ${varPercent.toFixed(0)}%`;
+
             renderCalendar(state.items, state.salary);
         }
 
@@ -683,11 +716,11 @@
                 
                 if (i <= dNeed) {
                     day.classList.add('bg-cyan-500', 'text-white');
-                    day.title = `Dia ${i}: Necessidades`;
+                    day.title = `Dia ${i}: Fixo (Necessidade)`;
                     day.innerText = i;
                 } else if (i <= dNeed + dDesire) {
                     day.classList.add('bg-fuchsia-500', 'text-white');
-                    day.title = `Dia ${i}: Desejos`;
+                    day.title = `Dia ${i}: Variável (Desejo)`;
                     day.innerText = i;
                 } else {
                     day.classList.add('bg-emerald-100', 'text-emerald-600', 'border', 'border-emerald-200');
