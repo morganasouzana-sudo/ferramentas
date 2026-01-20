@@ -95,7 +95,7 @@
                     </div>
                     <div>
                         <label class="block text-[10px] font-bold text-slate-500 mb-1 uppercase tracking-wider">Dias/Semana</label>
-                        <input type="number" id="daysPerWeek" value="5" max="7" min="1" class="glass-input w-full rounded-xl p-3 text-sm font-semibold placeholder-slate-400">
+                        <input type="number" id="daysPerWeek" value="5" class="glass-input w-full rounded-xl p-3 text-sm font-semibold placeholder-slate-400">
                     </div>
                 </div>
                 <div class="bg-white p-3 rounded-xl border border-slate-200">
@@ -133,9 +133,14 @@
                             <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Item</label>
                             <input type="text" id="itemName" class="glass-input w-full rounded-lg p-2.5 text-sm" placeholder="Ex: Jantar, Tênis novo">
                         </div>
-                        <div class="w-full sm:w-32">
+                        <div class="w-full sm:w-28">
                             <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Preço</label>
                             <input type="number" id="itemPrice" class="glass-input w-full rounded-lg p-2.5 text-sm text-right" placeholder="0.00">
+                        </div>
+                        <!-- New Installments Input -->
+                        <div class="w-full sm:w-16">
+                            <label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block pl-1">Parc.</label>
+                            <input type="number" id="itemInstallments" class="glass-input w-full rounded-lg p-2.5 text-sm text-center" placeholder="1" min="1" value="1">
                         </div>
                     </div>
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-3">
@@ -223,7 +228,7 @@
 
                     <!-- Totalzaço -->
                     <div id="grandTotalContainer" class="hidden mt-6 text-center bg-slate-50 p-5 rounded-2xl border border-slate-200">
-                        <p class="text-slate-400 mb-1 text-[10px] font-bold uppercase tracking-widest">Custo Total em Vida</p>
+                        <p class="text-slate-400 mb-1 text-[10px] font-bold uppercase tracking-widest">Custo Total (Mês Atual)</p>
                         <div class="text-4xl font-black text-slate-900 mb-1 tracking-tight" id="totalLifeTime">0h</div>
                         <p class="text-indigo-600 text-xs font-bold mb-4" id="totalDays">0 dias de trabalho</p>
                         
@@ -245,7 +250,8 @@
         const els = {
             salary: document.getElementById('salary'), hours: document.getElementById('hoursPerDay'), days: document.getElementById('daysPerWeek'), commuteRange: document.getElementById('commuteRange'), commuteLabel: document.getElementById('commuteLabel'),
             resultCard: document.getElementById('resultCard'), shopSection: document.getElementById('shopSection'), realRate: document.getElementById('realWageDisplay'), commuteImpact: document.getElementById('commuteImpactDisplay'),
-            itemName: document.getElementById('itemName'), itemPrice: document.getElementById('itemPrice'), itemsList: document.getElementById('itemsList'), emptyState: document.getElementById('emptyState'),
+            itemName: document.getElementById('itemName'), itemPrice: document.getElementById('itemPrice'), itemInstallments: document.getElementById('itemInstallments'),
+            itemsList: document.getElementById('itemsList'), emptyState: document.getElementById('emptyState'),
             totalContainer: document.getElementById('grandTotalContainer'), totalTime: document.getElementById('totalLifeTime'), totalDays: document.getElementById('totalDays'),
             batteryBar: document.getElementById('batteryBar'), batteryPercent: document.getElementById('batteryPercent'), batteryStatus: document.getElementById('batteryStatus'),
             calendarGrid: document.getElementById('calendarGrid'), freedomDayLabel: document.getElementById('freedomDayLabel'), calendarSubtitle: document.getElementById('calendarSubtitle'),
@@ -283,7 +289,6 @@
                 const nominalRate = state.salary / (state.totalMonthlyWorkDays * state.hoursPerDay);
                 const dailyTotalHours = state.hoursPerDay + (state.commuteMinutes / 60);
                 
-                // Real Hourly Rate is based on Total Hours Invested (Work + Commute)
                 state.monthlyWorkHours = state.totalMonthlyWorkDays * dailyTotalHours;
                 state.realHourlyRate = state.salary / state.monthlyWorkHours;
 
@@ -295,7 +300,6 @@
                 els.resultCard.classList.remove('hidden');
                 els.shopSection.classList.remove('opacity-50', 'pointer-events-none');
                 
-                // Update grid columns based on work days per week
                 els.calendarGrid.style.gridTemplateColumns = `repeat(${Math.ceil(state.daysPerWeek)}, minmax(0, 1fr))`;
                 els.calendarSubtitle.innerText = `Baseado em ${state.totalMonthlyWorkDays} dias úteis/mês`;
 
@@ -315,17 +319,18 @@
             if (state.realHourlyRate <= 0) return alert("Configure sua realidade primeiro.");
             const name = els.itemName.value.trim();
             const price = parseFloat(els.itemPrice.value);
+            const installments = parseInt(els.itemInstallments.value) || 1;
             const category = document.querySelector('input[name="category"]:checked').value;
             if (!name || isNaN(price) || price <= 0) return;
 
             if (editingId) {
                 const idx = state.items.findIndex(i => i.id === editingId);
-                if (idx !== -1) state.items[idx] = { ...state.items[idx], name, price, category };
+                if (idx !== -1) state.items[idx] = { ...state.items[idx], name, price, installments, category };
                 resetEditMode();
             } else {
-                state.items.push({ id: Date.now(), name, price, category });
+                state.items.push({ id: Date.now(), name, price, installments, category });
             }
-            els.itemName.value = ''; els.itemPrice.value = ''; els.itemName.focus();
+            els.itemName.value = ''; els.itemPrice.value = ''; els.itemInstallments.value = '1'; els.itemName.focus();
             saveState(); renderCart();
         }
 
@@ -333,7 +338,7 @@
             const item = state.items.find(i => i.id === id);
             if (!item) return;
             editingId = id;
-            els.itemName.value = item.name; els.itemPrice.value = item.price;
+            els.itemName.value = item.name; els.itemPrice.value = item.price; els.itemInstallments.value = item.installments || 1;
             document.getElementById(item.category === 'desire' ? 'cat-desire' : 'cat-need').checked = true;
             
             const btn = document.getElementById('mainActionBtn');
@@ -351,6 +356,7 @@
             btn.classList.replace('hover:bg-indigo-500', 'hover:bg-slate-800');
             document.getElementById('btnText').innerText = "Adicionar"; document.getElementById('btnIcon').innerHTML = "+";
             document.getElementById('inputContainer').classList.remove('ring-2', 'ring-indigo-100');
+            els.itemInstallments.value = '1';
         }
 
         function removeItem(id) {
@@ -388,11 +394,32 @@
                 const badgeClass = isNeed ? 'text-cyan-700 bg-cyan-50' : 'text-fuchsia-700 bg-fuchsia-50';
                 const contextText = getComparisonContext(hoursCost);
 
+                // Installment Logic
+                let installmentText = '';
+                let totalCostAlert = '';
+                let investmentBase = item.price;
+
+                if (item.installments > 1) {
+                    installmentText = `<span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-1.5 rounded ml-1">${item.installments}x</span>`;
+                    const totalPurchasePrice = item.price * item.installments;
+                    investmentBase = totalPurchasePrice;
+                    const totalPurchaseHours = totalPurchasePrice / state.realHourlyRate;
+                    const totalPurchaseDays = totalPurchaseHours / state.hoursPerDay;
+                    
+                    totalCostAlert = `
+                        <div class="mt-2 text-[10px] text-indigo-700 bg-indigo-50 p-2 rounded flex flex-col gap-0.5 border border-indigo-100">
+                            <span class="font-bold flex items-center gap-1">💳 Compra Parcelada</span>
+                            <span>Total real: <strong>${formatCurrency(totalPurchasePrice)}</strong></span>
+                            <span>Custo total de vida: <strong>${totalPurchaseDays.toFixed(1)} dias</strong></span>
+                        </div>
+                    `;
+                }
+
                 let investHtml = '';
-                if(item.price > 200) {
-                    const future = calculateCompoundInterest(item.price);
+                if(investmentBase > 200) {
+                    const future = calculateCompoundInterest(investmentBase);
                     investHtml = `<div class="mt-2 text-[10px] text-amber-700 bg-amber-50 p-1.5 rounded flex gap-1 items-center border border-amber-100">
-                        <span>📈</span> <span>Em 10 anos: <strong>${formatCurrency(future)}</strong></span>
+                        <span>📈</span> <span>Se investido o total (10 anos): <strong>${formatCurrency(future)}</strong></span>
                     </div>`;
                 }
 
@@ -402,9 +429,12 @@
                     <div>
                         <div class="flex justify-between items-start mb-2">
                             <div>
-                                <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider mb-0.5 ${badgeClass}">${badgeText}</span>
+                                <div class="flex items-center mb-0.5">
+                                    <span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${badgeClass}">${badgeText}</span>
+                                    ${installmentText}
+                                </div>
                                 <h4 class="font-bold text-slate-800 text-sm leading-tight line-clamp-1">${item.name}</h4>
-                                <p class="text-[10px] text-slate-500 font-mono">${formatCurrency(item.price)}</p>
+                                <p class="text-[10px] text-slate-500 font-mono">${formatCurrency(item.price)} <span class="opacity-70">/mês</span></p>
                             </div>
                             <div class="text-right">
                                 <span class="block text-slate-900 font-bold text-base">${formatTime(hoursCost)}</span>
@@ -414,11 +444,12 @@
                             <div class="${barColor} h-full" style="width: ${percent}%"></div>
                         </div>
                         <p class="text-[10px] text-slate-400 flex items-center gap-1"><span>💡</span> ${contextText}</p>
+                        ${totalCostAlert}
                         ${investHtml}
                     </div>
-                    <div class="flex justify-between items-center mt-3 pt-2 border-t border-slate-50">
+                    <div class="flex justify-end gap-2 mt-3 pt-2 border-t border-slate-50">
                          <button onclick="editItem(${item.id})" class="text-[10px] font-bold text-indigo-500 hover:bg-indigo-50 px-2 py-1 rounded transition-colors w-full text-center">EDITAR</button>
-                         <div class="w-px h-3 bg-slate-200"></div>
+                         <div class="w-px h-3 bg-slate-200 self-center"></div>
                          <button onclick="removeItem(${item.id})" class="text-[10px] font-bold text-red-400 hover:bg-red-50 px-2 py-1 rounded transition-colors w-full text-center">EXCLUIR</button>
                     </div>
                 `;
@@ -431,12 +462,7 @@
         function updateStats(money, hours, fixed, variable) {
             els.totalTime.innerText = formatTime(hours);
             
-            // KEY FIX: Coherence between text and calendar
-            // 1. Calculate Daily Wage based on Work Days only (Salary / Monthly Work Days)
             const dailyWage = state.salary / state.totalMonthlyWorkDays;
-            
-            // 2. Days Cost = Total Cost / Daily Wage
-            // This represents exactly how many "shifts" you need to work to pay for the items.
             const workDaysNeeded = money / dailyWage;
             
             els.totalDays.innerText = `Aprox. ${workDaysNeeded.toFixed(1)} dias de trabalho`;
@@ -455,20 +481,15 @@
             els.barFixed.style.width = `${fP}%`; els.barVariable.style.width = `${vP}%`;
             els.textFixed.innerText = `Fixos: ${fP.toFixed(0)}%`; els.textVariable.innerText = `Var: ${vP.toFixed(0)}%`;
 
-            // 3. Pass the EXACT SAME workDaysNeeded to the calendar
             renderCalendar(workDaysNeeded, fixed, variable);
         }
 
         function renderCalendar(workDaysNeeded, fixedTotal, variableTotal) {
             els.calendarGrid.innerHTML = '';
             
-            // Grid Size = Total Work Days in Month (e.g., 22 for 5-day weeks, 26 for 6-day weeks)
             const totalCells = state.totalMonthlyWorkDays;
-            
-            // Cells to paint = workDaysNeeded (clamped to totalCells)
             const totalUsed = Math.min(Math.ceil(workDaysNeeded), totalCells);
             
-            // Calculate ratio of Fixed vs Variable within the used days
             const totalMoney = fixedTotal + variableTotal;
             const fixedRatio = totalMoney > 0 ? (fixedTotal / totalMoney) : 0;
             const fixedDays = Math.ceil(totalUsed * fixedRatio);
