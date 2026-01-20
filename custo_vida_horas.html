@@ -442,19 +442,34 @@
             const dNeed = Math.ceil(needCost / dayValue);
             const dDesire = Math.ceil(desireCost / dayValue);
             const totalUsed = Math.min(dNeed + dDesire, 30);
+            
             const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
-
-            if(totalUsed === 0) els.freedomDayLabel.innerHTML = "Livre: Dia 01";
-            else if (totalUsed >= 30) els.freedomDayLabel.innerHTML = "<span class='text-red-500'>Sem liberdade</span>";
-            else els.freedomDayLabel.innerHTML = `Livre: <span class='text-emerald-600 font-bold'>Dia ${String(freeDay).padStart(2, '0')}</span>`;
+            if (totalUsed === 0) {
+                els.freedomDayLabel.innerHTML = "Você é livre dia <strong class='text-emerald-600'>01</strong>";
+            } else if (totalUsed >= 30) {
+                els.freedomDayLabel.innerHTML = "<strong class='text-red-600'>Mês Comprometido</strong>";
+            } else {
+                els.freedomDayLabel.innerHTML = `Livre dia <strong class='text-emerald-600'>${String(freeDay).padStart(2, '0')}</strong>`;
+            }
 
             for(let i=1; i<=30; i++) {
                 const day = document.createElement('div');
-                day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center day-cell cursor-default transition-all bg-slate-50 text-slate-300 border border-slate-100';
+                // Removidas classes de cor base (bg-slate-50, etc) daqui para evitar conflito
+                day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center day-cell cursor-default transition-all border';
                 
-                if (i <= dNeed) { day.className += ' bg-cyan-500 text-white border-cyan-600'; day.title = "Fixo"; day.innerText = i; }
-                else if (i <= dNeed + dDesire) { day.className += ' bg-fuchsia-500 text-white border-fuchsia-600'; day.title = "Variável"; day.innerText = i; }
-                else { day.className += ' bg-emerald-100 text-emerald-600 border-emerald-200'; day.title = "Livre"; day.innerText = i; }
+                if (i <= dNeed) { 
+                    day.className += ' bg-cyan-500 text-white border-cyan-600'; 
+                    day.title = `Dia ${i}: Fixo (Necessidade)`; 
+                    day.innerText = i; 
+                } else if (i <= dNeed + dDesire) { 
+                    day.className += ' bg-fuchsia-500 text-white border-fuchsia-600'; 
+                    day.title = `Dia ${i}: Variável (Desejo)`; 
+                    day.innerText = i; 
+                } else { 
+                    day.className += ' bg-emerald-100 text-emerald-600 border-emerald-200'; 
+                    day.title = `Dia ${i}: Livre`; 
+                    day.innerText = i; 
+                }
                 els.calendarGrid.appendChild(day);
             }
         }
