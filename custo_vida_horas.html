@@ -418,15 +418,13 @@
         function updateStats(money, hours, fixed, variable) {
             els.totalTime.innerText = formatTime(hours);
             
-            // Logic Fix: Days of work needed = % of salary * work days in month
-            // If item costs 50% of salary, it takes 50% of work days (~11 days).
-            const ratio = money / state.salary;
-            const avgWorkDays = state.daysPerWeek * 4.33; 
-            const workDaysNeeded = ratio * avgWorkDays;
-            
+            // Logic Fix: Days of work needed = Total Cost / Real Daily Income (Salary / Work Days in Month)
+            // Or simpler: Total Hours / Hours Per Day
+            // 48h / 8h = 6 days. 
+            const workDaysNeeded = hours / state.hoursPerDay;
             els.totalDays.innerText = `Aprox. ${workDaysNeeded.toFixed(1)} dias de trabalho`;
 
-            const percentConsumed = ratio * 100;
+            const percentConsumed = (money / state.salary) * 100;
             const p = Math.min(percentConsumed, 100);
             els.batteryBar.style.width = `${p}%`;
             els.batteryPercent.innerText = `${p.toFixed(1)}%`;
@@ -440,15 +438,17 @@
             els.barFixed.style.width = `${fP}%`; els.barVariable.style.width = `${vP}%`;
             els.textFixed.innerText = `Fixos: ${fP.toFixed(0)}%`; els.textVariable.innerText = `Var: ${vP.toFixed(0)}%`;
 
-            renderCalendar(percentConsumed);
+            // SYNC: We pass the calculated work days to the calendar renderer
+            // We use 'workDaysNeeded' because that is what the user sees in the text ("6 dias de trabalho")
+            renderCalendar(workDaysNeeded);
         }
 
-        function renderCalendar(percentConsumed) {
+        function renderCalendar(workDaysNeeded) {
             els.calendarGrid.innerHTML = '';
             
-            // Map percentage of salary consumed to 30 calendar days
-            // If I spent 50% of salary, 15 days are booked.
-            const totalUsed = Math.min(Math.ceil((percentConsumed / 100) * 30), 30);
+            // Map work days to squares. 
+            // We cap at 30 to show "Full Month" visually, but if it exceeds ~22 it's basically >100% of working time.
+            const totalUsed = Math.min(Math.ceil(workDaysNeeded), 30);
             const freeDay = totalUsed < 30 ? totalUsed + 1 : 'Nunca';
 
             if(totalUsed === 0) els.freedomDayLabel.innerHTML = "Livre: Dia 01";
@@ -459,8 +459,7 @@
                 const day = document.createElement('div');
                 day.className = 'aspect-square w-full rounded-md text-[9px] font-bold flex items-center justify-center cursor-default transition-all border';
                 
-                // Determine color based on item proportions (simplified for visual: first chunk Fixed, then Variable)
-                // We use global fixed/variable ratio to paint the used days
+                // Determine color based on ratio of Fixed vs Variable
                 const fixedRatio = parseFloat(els.textFixed.innerText.replace(/\D/g,'')) / 100 || 0;
                 const fixedDays = Math.ceil(totalUsed * fixedRatio);
                 
